@@ -506,6 +506,9 @@ function setStep(n){
 function cancelGen(){aborted=true;showScreen('search');}
 
 function openPlayer(p){
+  if (p._cost) {
+    console.log('Episode cost: $' + p._cost.toFixed(4));
+  }
   pod=p;elapsed=0;lineIdx=0;playing=false;stopPlay();
   allLines=[];
   (p.segments||[]).forEach((seg,si)=>{
@@ -515,8 +518,8 @@ function openPlayer(p){
   document.getElementById('epCover').textContent=p.emoji||'🎙';
   document.getElementById('epTitle').textContent=p.title;
   document.getElementById('epSub').textContent=p.subtitle;
-  document.getElementById('epTags').innerHTML=(p.tags||[]).map(t=>`<span class="ep-tag">${t}</span>`).join('')+`<span class="ep-tag">${p.duration_minutes||'?'} min</span>`;
-  document.getElementById('totalTime').textContent=fmt(totalSecs);
+const costTag = p._cost ? `<span class="ep-tag" style="background:var(--green-bg);color:var(--green)">$${p._cost.toFixed(3)}</span>` : '';
+document.getElementById('epTags').innerHTML=(p.tags||[]).map(t=>`<span class="ep-tag">${t}</span>`).join('')+`<span class="ep-tag">${p.duration_minutes||'?'} min</span>`+costTag;  document.getElementById('totalTime').textContent=fmt(totalSecs);
   document.getElementById('playIcon').innerHTML='<path d="M6 3.5l7 4.5-7 4.5V3.5z"/>';
   buildTranscript(p);buildChapters(p);buildSourcesPane(p);
   updateNP(0);updateProg();
