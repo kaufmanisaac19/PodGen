@@ -418,9 +418,23 @@ function loadHistory(){
   renderHistory();
 }
 function saveToHistory(p){
-  history.unshift({id:Date.now(),title:p.title,emoji:p.emoji||'🎙',fmt:p.format,dur:p.duration_minutes,ts:new Date().toLocaleDateString(),data:p});
+  // Strip audio data before saving to avoid exceeding localStorage quota
+  const stripped = JSON.parse(JSON.stringify(p));
+  (stripped.segments||[]).forEach(seg=>{
+    (seg.lines||[]).forEach(line=>{
+      delete line.audio;
+      delete line.voice;
+    });
+  });
+  history.unshift({id:Date.now(),title:p.title,emoji:p.emoji||'🎙',fmt:p.format,dur:p.duration_minutes,ts:new Date().toLocaleDateString(),data:stripped});
   if(history.length>10)history=history.slice(0,10);
-  localStorage.setItem('podgen_history',JSON.stringify(history));
+  try{
+    localStorage.setItem('podgen_history',JSON.stringify(history));
+  }catch(e){
+    // If still too large, clear history and try again
+    history=history.slice(0,3);
+    localStorage.setItem('podgen_history',JSON.stringify(history));
+  }
   renderHistory();
 }
 function renderHistory(){
