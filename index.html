@@ -431,9 +431,14 @@ window.addEventListener('load',()=>{
   if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 });
 
+const DEFAULT_WORKER_URL='https://podgen.kaufman-isaac19.workers.dev';
+
 function checkWorkerUrl(){
+  if(!localStorage.getItem('podgen_worker_url')){
+    localStorage.setItem('podgen_worker_url',DEFAULT_WORKER_URL);
+  }
   const url=localStorage.getItem('podgen_worker_url');
-  document.getElementById('workerNotice').style.display=url?'none':'block';
+  document.getElementById('workerNotice').style.display='none';
   if(url)document.getElementById('workerUrlInput').value=url;
 }
 function showSetup(){document.getElementById('setupModal').classList.add('on');}
