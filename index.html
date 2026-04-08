@@ -90,6 +90,13 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
 .ep-sub{font-size:12px;color:var(--muted);line-height:1.4}
 .ep-tags{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}
 .ep-tag{font-size:10px;padding:2px 7px;border-radius:99px;background:var(--surface2);color:var(--muted)}
+.ep-actions{display:flex;gap:7px;margin-top:8px}
+.act-btn{display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:5px 12px;border-radius:8px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;-webkit-appearance:none;font-family:inherit}
+.act-btn:active{background:var(--surface2)}
+.act-btn.share{border-color:var(--accent-bd);color:var(--accent);background:var(--accent-bg)}
+.act-btn svg{width:12px;height:12px}
+.copy-toast{display:none;font-size:11px;color:var(--green);margin-top:4px}
+.copy-toast.show{display:block}
 .np-strip{padding:9px 16px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;flex-shrink:0}
 .av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0}
 .av-h1{background:var(--accent-bg);color:var(--accent)}
@@ -176,6 +183,12 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
 .modal-url{font-size:12px;color:var(--accent);word-break:break-all;display:flex;align-items:flex-start;gap:5px;text-decoration:none}
 .modal-url svg{width:12px;height:12px;flex-shrink:0;margin-top:2px}
 .modal-close{display:block;text-align:center;font-size:13px;color:var(--muted);cursor:pointer;margin-top:16px;padding:8px}
+.share-url-box{background:var(--surface2);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--text);word-break:break-all;margin-bottom:12px;font-family:monospace;line-height:1.5}
+.share-copy-btn{width:100%;height:44px;border-radius:10px;background:var(--accent);color:#fff;border:none;font-size:14px;font-weight:600;cursor:pointer;-webkit-appearance:none;margin-bottom:8px}
+.share-copy-btn:active{background:#2563eb}
+.share-dl-btn{width:100%;height:44px;border-radius:10px;background:transparent;color:var(--green);border:1px solid var(--green-bd);font-size:14px;font-weight:500;cursor:pointer;-webkit-appearance:none;display:flex;align-items:center;justify-content:center;gap:6px;font-family:inherit}
+.share-dl-btn:active{background:var(--green-bg)}
+.share-note{font-size:11px;color:var(--dim);text-align:center;margin-top:10px;line-height:1.5}
 .setup-modal{max-width:520px;margin:0 auto;width:100%}
 .setup-title{font-size:18px;font-weight:600;margin-bottom:6px}
 .setup-sub{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:20px}
@@ -218,7 +231,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
         <div class="search-wrap">
           <div class="search-row">
             <input type="text" class="s-input" id="topicInput" placeholder="Any topic — science, politics, health..." autocomplete="off" autocorrect="off" spellcheck="false">
-            <button class="g-btn" id="genBtn" onclick="startGenerate()">Generate</button>
+            <button class="g-btn" onclick="startGenerate()">Generate</button>
           </div>
           <div class="fmt-row">
             <button class="f-btn active" data-fmt="news-dive">News deep-dive</button>
@@ -256,6 +269,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
         <div class="g-step" id="step2"><span class="g-dot"></span>Verifying facts &amp; sources</div>
         <div class="g-step" id="step3"><span class="g-dot"></span>Writing the script</div>
         <div class="g-step" id="step4"><span class="g-dot"></span>Generating real voices</div>
+        <div class="g-step" id="step5"><span class="g-dot"></span>Saving shareable episode</div>
       </div>
       <div class="gen-err" id="genErr" style="display:none"></div>
       <button class="cancel-btn" onclick="cancelGen()">Cancel</button>
@@ -272,6 +286,17 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
         <div class="ep-title" id="epTitle">—</div>
         <div class="ep-sub" id="epSub">—</div>
         <div class="ep-tags" id="epTags"></div>
+        <div class="ep-actions">
+          <button class="act-btn share" id="shareBtn" onclick="showShareModal()" style="display:none">
+            <svg viewBox="0 0 12 12" fill="currentColor"><path d="M9 8c-.5 0-.9.2-1.2.5L4.5 6.8c0-.3.1-.5.1-.8s0-.5-.1-.8L7.8 3.5c.3.3.7.5 1.2.5 1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2c0 .3 0 .5.1.8L3.8 4.5C3.5 4.2 3.1 4 2.6 4c-1.1 0-2 .9-2 2s.9 2 2 2c.5 0 .9-.2 1.2-.5l3.3 1.8c-.1.2-.1.5-.1.7 0 1.1.9 2 2 2s2-.9 2-2-.9-2-2-2z"/></svg>
+            Share
+          </button>
+          <button class="act-btn" id="dlBtn" onclick="downloadEpisode()" style="display:none">
+            <svg viewBox="0 0 12 12" fill="currentColor"><path d="M6 8L2 4h3V0h2v4h3L6 8zM0 10h12v2H0v-2z"/></svg>
+            Download MP3
+          </button>
+        </div>
+        <div class="copy-toast" id="copyToast">Link copied!</div>
       </div>
     </div>
     <div class="np-strip">
@@ -296,7 +321,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
       </div>
     </div>
     <div class="p-bar">
-      <div class="prog-bg" id="progBg" onclick="seekClick(event)"><div class="prog-fill" id="progFill"></div></div>
+      <div class="prog-bg" onclick="seekClick(event)"><div class="prog-fill" id="progFill"></div></div>
       <div class="prog-times"><span id="elapsed">0:00</span><span id="totalTime">0:00</span></div>
       <div class="ctrl-row">
         <button class="cb" onclick="skip(-15)">
@@ -319,7 +344,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
     </div>
   </div>
 
-  <div class="modal-bg" id="srcModal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-bg" id="srcModal" onclick="if(event.target===this)closeModal('srcModal')">
     <div class="modal">
       <div class="modal-pill"></div>
       <div class="modal-title" id="mdTitle"></div>
@@ -329,11 +354,27 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
         <svg viewBox="0 0 12 12" fill="currentColor"><path d="M1 1h5v1H2v8h8V6h1v5H1V1zm6 0h4v4H10V2.7L6.35 6.35l-.7-.7L9.3 2H7V1z"/></svg>
         <span id="mdUrlText"></span>
       </a>
-      <div class="modal-close" onclick="closeModal()">Close</div>
+      <div class="modal-close" onclick="closeModal('srcModal')">Close</div>
     </div>
   </div>
 
-  <div class="modal-bg" id="setupModal" onclick="if(event.target===this)closeSetup()">
+  <div class="modal-bg" id="shareModal" onclick="if(event.target===this)closeModal('shareModal')">
+    <div class="modal">
+      <div class="modal-pill"></div>
+      <div class="modal-title">Share this episode</div>
+      <div style="font-size:13px;color:var(--muted);margin:6px 0 14px;line-height:1.5">Anyone with this link can listen for free — no app needed, no sign up.</div>
+      <div class="share-url-box" id="shareUrlBox">Loading...</div>
+      <button class="share-copy-btn" onclick="copyShareLink()">Copy link</button>
+      <button class="share-dl-btn" onclick="downloadEpisode()">
+        <svg width="14" height="14" viewBox="0 0 12 12" fill="currentColor"><path d="M6 8L2 4h3V0h2v4h3L6 8zM0 10h12v2H0v-2z"/></svg>
+        Download MP3
+      </button>
+      <div class="share-note">The link plays the full episode directly in any browser. Send it via iMessage, WhatsApp, email — anywhere.</div>
+      <div class="modal-close" onclick="closeModal('shareModal')">Close</div>
+    </div>
+  </div>
+
+  <div class="modal-bg" id="setupModal" onclick="if(event.target===this)closeModal('setupModal')">
     <div class="modal setup-modal">
       <div class="modal-pill"></div>
       <div class="setup-title">Connect your Worker</div>
@@ -353,12 +394,13 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
         </div>
       </div>
       <button class="save-btn" onclick="saveWorkerUrl()">Save &amp; start generating</button>
-      <div class="modal-close" onclick="closeSetup()">Cancel</div>
+      <div class="modal-close" onclick="closeModal('setupModal')">Close</div>
     </div>
   </div>
 
 </div>
 <script>
+const R2_BASE='https://pub-d23ec625d76d452398e0dbe525d7aec3.r2.dev';
 const SUGS=[
   {e:'🧬',t:'CRISPR gene editing 2025',f:'news-dive'},
   {e:'🏠',t:'Global housing affordability crisis',f:'debate'},
@@ -371,9 +413,11 @@ const SUGS=[
 ];
 const FMT_LABELS={'news-dive':'News deep-dive','interview':'Interview','debate':'Panel debate','explainer':'Explainer'};
 const speeds=[0.75,1,1.25,1.5,2];
+
 let pod=null,allLines=[],playing=false,elapsed=0,lineIdx=0;
 let totalSecs=0,speedIdx=1,aborted=false,history=[];
 let currentAudio=null,progressTimer=null;
+let currentShareUrl=null,currentEpisodeId=null;
 
 window.addEventListener('load',()=>{
   buildSugs();loadHistory();checkWorkerUrl();
@@ -382,6 +426,8 @@ window.addEventListener('load',()=>{
     document.querySelectorAll('.f-btn').forEach(x=>x.classList.remove('active'));
     b.classList.add('active');
   }));
+  const params=new URLSearchParams(window.location.search);
+  if(params.get('ep'))loadSharedEpisode(params.get('ep'));
   if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 });
 
@@ -391,13 +437,13 @@ function checkWorkerUrl(){
   if(url)document.getElementById('workerUrlInput').value=url;
 }
 function showSetup(){document.getElementById('setupModal').classList.add('on');}
-function closeSetup(){document.getElementById('setupModal').classList.remove('on');}
 function saveWorkerUrl(){
   const val=document.getElementById('workerUrlInput').value.trim().replace(/\/+$/,'');
   if(!val.startsWith('http')){alert('Please enter a valid URL starting with https://');return;}
   localStorage.setItem('podgen_worker_url',val);
-  checkWorkerUrl();closeSetup();
+  checkWorkerUrl();closeModal('setupModal');
 }
+function closeModal(id){document.getElementById(id).classList.remove('on');}
 
 function buildSugs(){
   document.getElementById('sugGrid').innerHTML=SUGS.map(s=>
@@ -418,21 +464,11 @@ function loadHistory(){
   renderHistory();
 }
 function saveToHistory(p){
-  const stripped = JSON.parse(JSON.stringify(p));
-  (stripped.segments||[]).forEach(seg=>{
-    (seg.lines||[]).forEach(line=>{
-      delete line.audio;
-      delete line.voice;
-    });
-  });
-  history.unshift({id:Date.now(),title:p.title,emoji:p.emoji||'🎙',fmt:p.format,dur:p.duration_minutes,ts:new Date().toLocaleDateString(),data:stripped});
+  const stripped=JSON.parse(JSON.stringify(p));
+  (stripped.segments||[]).forEach(seg=>{(seg.lines||[]).forEach(line=>{delete line.audio;delete line.voice;});});
+  history.unshift({id:Date.now(),title:p.title,emoji:p.emoji||'🎙',fmt:p.format,dur:p.duration_minutes,ts:new Date().toLocaleDateString(),episodeId:p.episodeId,data:stripped});
   if(history.length>10)history=history.slice(0,10);
-  try{
-    localStorage.setItem('podgen_history',JSON.stringify(history));
-  }catch(e){
-    localStorage.removeItem('podgen_history');
-    history=[];
-  }
+  try{localStorage.setItem('podgen_history',JSON.stringify(history));}catch(e){localStorage.removeItem('podgen_history');history=[];}
   renderHistory();
 }
 function renderHistory(){
@@ -444,7 +480,7 @@ function renderHistory(){
       <div class="hist-icon">${h.emoji}</div>
       <div class="hist-body">
         <div class="hist-title">${h.title}</div>
-        <div class="hist-meta">${FMT_LABELS[h.fmt]||''} · ${h.dur||'?'} min · ${h.ts}</div>
+        <div class="hist-meta">${FMT_LABELS[h.fmt]||''} · ${h.dur||'?'} min · ${h.ts}${h.episodeId?' · shareable':''}</div>
       </div>
       <span class="hist-arrow">▶</span>
     </div>`).join('');
@@ -478,12 +514,9 @@ async function startGenerate(){
     const data=await res.json();
     if(!res.ok)throw new Error(data.error||`Server error ${res.status}`);
     if(!data.podcast)throw new Error('No podcast data returned. Please try again.');
-    setStep(3);
-    await new Promise(r=>setTimeout(r,200));
-    if(aborted)return;
-    setStep(4);
-    await new Promise(r=>setTimeout(r,200));
-    if(aborted)return;
+    setStep(3);await new Promise(r=>setTimeout(r,200));if(aborted)return;
+    setStep(4);await new Promise(r=>setTimeout(r,200));if(aborted)return;
+    setStep(5);await new Promise(r=>setTimeout(r,200));if(aborted)return;
     saveToHistory(data.podcast);
     openPlayer(data.podcast);
   }catch(err){
@@ -496,7 +529,7 @@ async function startGenerate(){
 }
 
 function setStep(n){
-  ['step1','step2','step3','step4'].forEach((id,i)=>{
+  ['step1','step2','step3','step4','step5'].forEach((id,i)=>{
     const el=document.getElementById(id);
     el.classList.remove('active','done');
     if(i+1<n)el.classList.add('done');
@@ -505,26 +538,78 @@ function setStep(n){
 }
 function cancelGen(){aborted=true;showScreen('search');}
 
+async function loadSharedEpisode(episodeId){
+  try{
+    const metaUrl=`${R2_BASE}/episodes/${episodeId}.json`;
+    const res=await fetch(metaUrl);
+    if(!res.ok)return;
+    const meta=await res.json();
+    meta.episodeId=episodeId;
+    meta._sharedAudioUrl=`${R2_BASE}/episodes/${episodeId}.mp3`;
+    openPlayer(meta);
+  }catch(err){console.log('Could not load shared episode',err);}
+}
+
 function openPlayer(p){
-  if (p._cost) {
-    console.log('Episode cost: $' + p._cost.toFixed(4));
-  }
   pod=p;elapsed=0;lineIdx=0;playing=false;stopPlay();
   allLines=[];
   (p.segments||[]).forEach((seg,si)=>{
     (seg.lines||[]).forEach((ln,li)=>allLines.push({...ln,si,li,segTitle:seg.title,segType:seg.type}));
   });
-  totalSecs=allLines.reduce((acc,l)=>acc+(l.audioDuration||4),0)||((p.duration_minutes||25)*60);
+  totalSecs=((p.duration_minutes||25)*60);
+
   document.getElementById('epCover').textContent=p.emoji||'🎙';
   document.getElementById('epTitle').textContent=p.title;
   document.getElementById('epSub').textContent=p.subtitle;
-const costTag = p._cost ? `<span class="ep-tag" style="background:var(--green-bg);color:var(--green)">$${p._cost.toFixed(3)}</span>` : '';
-document.getElementById('epTags').innerHTML=(p.tags||[]).map(t=>`<span class="ep-tag">${t}</span>`).join('')+`<span class="ep-tag">${p.duration_minutes||'?'} min</span>`+costTag;  document.getElementById('totalTime').textContent=fmt(totalSecs);
+
+  const cost=p._openaiCost?((p._anthropicCost||0)+p._openaiCost):0;
+  const costTag=cost?`<span class="ep-tag" style="background:var(--green-bg);color:var(--green)">$${cost.toFixed(3)}</span>`:'';
+  document.getElementById('epTags').innerHTML=(p.tags||[]).map(t=>`<span class="ep-tag">${t}</span>`).join('')+`<span class="ep-tag">${p.duration_minutes||'?'} min</span>`+costTag;
+  document.getElementById('totalTime').textContent=fmt(totalSecs);
   document.getElementById('playIcon').innerHTML='<path d="M6 3.5l7 4.5-7 4.5V3.5z"/>';
+
+  currentEpisodeId=p.episodeId||null;
+  currentShareUrl=p.episodeId?`${R2_BASE}/episodes/${p.episodeId}.mp3`:p._sharedAudioUrl||null;
+
+  document.getElementById('shareBtn').style.display=currentShareUrl?'inline-flex':'none';
+  document.getElementById('dlBtn').style.display=currentShareUrl?'inline-flex':'none';
+
   buildTranscript(p);buildChapters(p);buildSourcesPane(p);
   updateNP(0);updateProg();
   switchTab('transcript',document.querySelector('.p-tab'));
   showScreen('player');
+}
+
+function showShareModal(){
+  if(!currentShareUrl)return;
+  const appUrl=`${window.location.origin}${window.location.pathname}?ep=${currentEpisodeId}`;
+  document.getElementById('shareUrlBox').textContent=appUrl;
+  document.getElementById('shareModal').classList.add('on');
+}
+
+function copyShareLink(){
+  const url=document.getElementById('shareUrlBox').textContent;
+  navigator.clipboard.writeText(url).then(()=>{
+    closeModal('shareModal');
+    const toast=document.getElementById('copyToast');
+    toast.classList.add('show');
+    setTimeout(()=>toast.classList.remove('show'),2500);
+  }).catch(()=>{
+    const el=document.createElement('textarea');
+    el.value=url;document.body.appendChild(el);el.select();
+    document.execCommand('copy');document.body.removeChild(el);
+    closeModal('shareModal');
+  });
+}
+
+function downloadEpisode(){
+  if(!currentShareUrl)return;
+  const a=document.createElement('a');
+  a.href=currentShareUrl;
+  a.download=(pod?.title||'podcast').replace(/[^a-z0-9]/gi,'_')+'.mp3';
+  a.target='_blank';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  closeModal('shareModal');
 }
 
 function segBadge(type){return{intro:'sb-intro',facts:'sb-facts',story:'sb-story',interview:'sb-interview',debate:'sb-debate',wrap:'sb-wrap'}[type]||'sb-wrap';}
@@ -538,7 +623,7 @@ function buildTranscript(p){
       const lc={host1:'lsh1',host2:'lsh2',guest:'lsguest',narrator:'lsnarrator'}[ln.role]||'lsh1';
       const chips=(ln.source_ids||[]).map(sid=>{
         const s=srcs.find(x=>x.id===sid);if(!s)return'';
-        return`<button class="src-chip" onclick="showSrc('${sid}')"><svg viewBox="0 0 10 10" fill="currentColor"><path d="M1 1h4v1H2v6h6V5h1v4H1V1zm5 0h3v3H8V2.7L4.85 5.85l-.7-.7L7.3 2H6V1z"/></svg>${s.title.split('—')[0].trim().substring(0,25)}…</button>`;
+        return`<button class="src-chip" onclick="showSrc('${sid}')"><svg viewBox="0 0 10 10" fill="currentColor"><path d="M1 1h4v1H2v6h6V5h1v4H1V1zm5 0h3v3H8V2.7L4.85 5.85l-.7-.7L7.3 2H6V1z"/></svg>${s.title.split('—')[0].trim().substring(0,25)}...</button>`;
       }).join('');
       return`<div class="line ${rc}" id="line-${gi}" onclick="jumpLine(${gi})">
         <div class="l-speaker ${lc}">${ln.speaker}</div>
@@ -589,7 +674,7 @@ function showSrc(sid){
   document.getElementById('mdUrlText').textContent=s.url;
   document.getElementById('srcModal').classList.add('on');
 }
-function closeModal(){document.getElementById('srcModal').classList.remove('on');}
+
 function toggleSeg(id,hd){
   document.getElementById(id).classList.toggle('open');
   hd.querySelector('.seg-chev').classList.toggle('open');
@@ -602,7 +687,6 @@ function switchTab(name,btn){
 }
 
 function fmt(s){s=Math.max(0,Math.floor(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
-
 function updateProg(){
   const pct=totalSecs>0?Math.min(100,(elapsed/totalSecs)*100):0;
   document.getElementById('progFill').style.width=pct.toFixed(1)+'%';
@@ -636,11 +720,38 @@ function playLine(idx){
   lineIdx=idx;
   const line=allLines[idx];
   updateNP(idx);
-  if(line.audio){
-    playBase64Audio(line.audio,idx);
-  } else {
-    playTTS(line,idx);
+  if(pod?._sharedAudioUrl&&!pod?.segments?.[0]?.lines?.[0]?.audio){
+    // Shared episode — play single R2 MP3
+    if(idx===0||!currentAudio){
+      playDirectUrl(pod._sharedAudioUrl);
+    }
+    return;
   }
+  if(line.audio){playBase64Audio(line.audio,idx);}
+  else{playTTS(line,idx);}
+}
+
+function playDirectUrl(url){
+  if(currentAudio){currentAudio.pause();currentAudio=null;}
+  clearInterval(progressTimer);
+  const audio=new Audio(url);
+  audio.crossOrigin='anonymous';
+  audio.volume=parseFloat(document.getElementById('volSlider').value);
+  audio.playbackRate=speeds[speedIdx];
+  currentAudio=audio;
+  audio.addEventListener('loadedmetadata',()=>{
+    totalSecs=Math.floor(audio.duration);
+    document.getElementById('totalTime').textContent=fmt(totalSecs);
+  });
+  progressTimer=setInterval(()=>{
+    if(!playing){clearInterval(progressTimer);return;}
+    if(currentAudio&&!currentAudio.paused){
+      elapsed=Math.floor(currentAudio.currentTime);
+      updateProg();
+    }
+  },500);
+  audio.addEventListener('ended',()=>{clearInterval(progressTimer);stopPlay();});
+  audio.play().catch(err=>console.log('Audio error:',err));
 }
 
 function playBase64Audio(b64,idx){
@@ -655,14 +766,8 @@ function playBase64Audio(b64,idx){
     elapsed=Math.min(totalSecs,elapsed+0.25);
     updateProg();
   },250);
-  audio.addEventListener('ended',()=>{
-    clearInterval(progressTimer);
-    if(playing)playLine(idx+1);
-  });
-  audio.addEventListener('error',()=>{
-    clearInterval(progressTimer);
-    playTTS(allLines[idx],idx);
-  });
+  audio.addEventListener('ended',()=>{clearInterval(progressTimer);if(playing)playLine(idx+1);});
+  audio.addEventListener('error',()=>{clearInterval(progressTimer);playTTS(allLines[idx],idx);});
   audio.play().catch(()=>playTTS(allLines[idx],idx));
 }
 
@@ -699,11 +804,12 @@ function startPlay(){
   if(!allLines.length)return;
   playing=true;
   document.getElementById('playIcon').innerHTML='<rect x="4" y="3" width="3" height="10" rx="1"/><rect x="9" y="3" width="3" height="10" rx="1"/>';
-  playLine(Math.min(allLines.length-1,Math.floor((elapsed/totalSecs)*allLines.length)));
+  const startLine=Math.min(allLines.length-1,Math.floor(elapsed/totalSecs*allLines.length));
+  playLine(startLine);
 }
 function pausePlay(){
   playing=false;clearInterval(progressTimer);
-  if(currentAudio){currentAudio.pause();currentAudio=null;}
+  if(currentAudio)currentAudio.pause();
   synth.pause();
   document.getElementById('playIcon').innerHTML='<path d="M6 3.5l7 4.5-7 4.5V3.5z"/>';
 }
@@ -714,6 +820,10 @@ function stopPlay(){
   document.getElementById('playIcon').innerHTML='<path d="M6 3.5l7 4.5-7 4.5V3.5z"/>';
 }
 function skip(secs){
+  if(currentAudio&&pod?._sharedAudioUrl){
+    currentAudio.currentTime=Math.max(0,Math.min(currentAudio.duration||totalSecs,(currentAudio.currentTime||0)+secs));
+    return;
+  }
   elapsed=Math.max(0,Math.min(totalSecs-1,elapsed+secs));
   const nl=Math.min(allLines.length-1,Math.floor((elapsed/totalSecs)*allLines.length));
   lineIdx=nl;updateProg();updateNP(nl);
@@ -734,6 +844,10 @@ function jumpLine(idx){
 function seekClick(e){
   const r=e.currentTarget.getBoundingClientRect();
   const pct=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width));
+  if(currentAudio&&pod?._sharedAudioUrl){
+    currentAudio.currentTime=pct*(currentAudio.duration||totalSecs);
+    return;
+  }
   elapsed=pct*totalSecs;
   const nl=Math.min(allLines.length-1,Math.floor(pct*allLines.length));
   lineIdx=nl;updateProg();updateNP(nl);
