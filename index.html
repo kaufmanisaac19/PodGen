@@ -418,7 +418,6 @@ function loadHistory(){
   renderHistory();
 }
 function saveToHistory(p){
-  // Strip audio data before saving to avoid exceeding localStorage quota
   const stripped = JSON.parse(JSON.stringify(p));
   (stripped.segments||[]).forEach(seg=>{
     (seg.lines||[]).forEach(line=>{
@@ -431,9 +430,8 @@ function saveToHistory(p){
   try{
     localStorage.setItem('podgen_history',JSON.stringify(history));
   }catch(e){
-    // If still too large, clear history and try again
-    history=history.slice(0,3);
-    localStorage.setItem('podgen_history',JSON.stringify(history));
+    localStorage.removeItem('podgen_history');
+    history=[];
   }
   renderHistory();
 }
