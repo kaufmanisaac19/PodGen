@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0f172a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PodGen">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>PodGen</title>
+<style>
+:root {
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --surface2: #273449;
+  --surface3: #2f3f58;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.14);
+  --text: #f1f5f9;
+  --muted: #94a3b8;
+  --dim: #64748b;
+  --accent: #3b82f6;
+  --accent-bg: rgba(59,130,246,0.12);
+  --accent-border: rgba(59,130,246,0.3);
+  --green: #34d399;
+  --green-bg: rgba(52,211,153,0.1);
+  --amber: #f59e0b;
+  --amber-bg: rgba(245,158,11,0.1);
+  --purple: #a78bfa;
+  --purple-bg: rgba(167,139,250,0.1);
+  --red: #f87171;
+  --red-bg: rgba(248,113,113,0.1);
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;overflow:hidden}
+.app{display:flex;flex-direction:column;height:100%;height:-webkit-fill-available;max-width:700px;margin:0 auto}
+
+/* ── Screens ── */
+.screen{display:none;flex-direction:column;flex:1;overflow:hidden}
+.screen.active{display:flex}
+
+/* ══════════════════════════════════════
+   SEARCH SCREEN
+══════════════════════════════════════ */
+.search-screen{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 0 80px}
+.search-header{padding:max(20px,var(--safe-top)) 20px 0}
+.logo-row{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.logo-icon{width:36px;height:36px;border-radius:10px;background:var(--accent-bg);border:1px solid var(--accent-border);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-icon svg{width:20px;height:20px}
+.logo-title{font-size:22px;font-weight:700;letter-spacing:-0.5px}
+.logo-sub{font-size:13px;color:var(--muted);padding-bottom:20px;border-bottom:1px solid var(--border)}
+
+.search-box{margin:20px 20px 0}
+.search-input-wrap{display:flex;gap:8px}
+.search-input{
+  flex:1;height:48px;border-radius:12px;
+  border:1px solid var(--border2);background:var(--surface);
+  color:var(--text);font-size:15px;padding:0 14px;outline:none;
+  -webkit-appearance:none;appearance:none;
+}
+.search-input:focus{border-color:var(--accent)}
+.search-input::placeholder{color:var(--dim)}
+.gen-btn{
+  height:48px;padding:0 18px;border-radius:12px;
+  background:var(--accent);color:#fff;
+  border:none;font-size:14px;font-weight:600;cursor:pointer;
+  white-space:nowrap;-webkit-appearance:none;
+}
+.gen-btn:active{transform:scale(0.97)}
+.gen-btn:disabled{opacity:0.45;cursor:not-allowed}
+
+.format-row{display:flex;gap:8px;margin:12px 20px 0;flex-wrap:wrap}
+.fmt-btn{
+  padding:7px 14px;border-radius:99px;
+  border:1px solid var(--border2);background:transparent;
+  color:var(--muted);font-size:13px;cursor:pointer;
+  -webkit-appearance:none;transition:all 0.15s;
+}
+.fmt-btn.active{background:var(--accent-bg);color:var(--accent);border-color:var(--accent-border)}
+.fmt-btn:active{transform:scale(0.96)}
+
+.api-key-section{margin:16px 20px 0;padding:14px;background:var(--surface);border-radius:12px;border:1px solid var(--border)}
+.api-key-label{font-size:12px;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.api-key-label span{flex:1}
+.api-key-link{font-size:11px;color:var(--accent);text-decoration:none}
+.api-key-input{
+  width:100%;height:38px;border-radius:8px;
+  border:1px solid var(--border2);background:var(--surface2);
+  color:var(--text);font-size:13px;padding:0 10px;outline:none;
+  font-family:monospace;-webkit-appearance:none;
+}
+.api-key-input:focus{border-color:var(--accent)}
+.api-key-note{font-size:11px;color:var(--dim);margin-top:6px;line-height:1.5}
+
+.suggestions-section{margin:20px 20px 0}
+.section-label{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px}
+.sug-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sug-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:12px;cursor:pointer;transition:background 0.15s;
+}
+.sug-card:active{background:var(--surface2)}
+.sug-emoji{font-size:20px;margin-bottom:6px}
+.sug-title{font-size:13px;font-weight:500;line-height:1.3;color:var(--text)}
+.sug-meta{font-size:11px;color:var(--muted);margin-top:3px}
+
+.history-section{margin:20px 20px 0}
+.hist-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;
+}
+.hist-item:last-child{border-bottom:none}
+.hist-icon{width:32px;height:32px;border-radius:8px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.hist-body{flex:1;min-width:0}
+.hist-title{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hist-meta{font-size:11px;color:var(--muted);margin-top:2px}
+.hist-play{color:var(--accent);font-size:18px;flex-shrink:0}
+
+/* ══════════════════════════════════════
+   GENERATING SCREEN
+══════════════════════════════════════ */
+.gen-screen{align-items:center;justify-content:center;padding:40px 24px}
+.gen-icon{width:64px;height:64px;border-radius:16px;background:var(--accent-bg);border:1px solid var(--accent-border);display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+.gen-icon svg{width:32px;height:32px}
+.gen-title{font-size:19px;font-weight:600;text-align:center;margin-bottom:8px}
+.gen-topic{font-size:14px;color:var(--accent);text-align:center;margin-bottom:28px}
+.gen-steps{width:100%;max-width:360px}
+.gen-step{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 14px;border-radius:10px;margin-bottom:8px;
+  background:var(--surface);border:1px solid var(--border);
+  font-size:14px;color:var(--muted);transition:all 0.3s;
+}
+.gen-step.active{background:var(--accent-bg);border-color:var(--accent-border);color:var(--text)}
+.gen-step.done{border-color:rgba(52,211,153,0.3);background:var(--green-bg);color:var(--green)}
+.step-dot{width:8px;height:8px;border-radius:50%;background:var(--dim);flex-shrink:0;transition:background 0.3s}
+.gen-step.active .step-dot{background:var(--accent);animation:pulse 1s infinite}
+.gen-step.done .step-dot{background:var(--green)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.gen-cancel{margin-top:24px;font-size:13px;color:var(--muted);cursor:pointer;padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);-webkit-appearance:none}
+.gen-error{margin-top:16px;padding:14px;background:var(--red-bg);border:1px solid rgba(248,113,113,0.25);border-radius:10px;font-size:13px;color:var(--red);text-align:center;max-width:360px;line-height:1.5}
+
+/* ══════════════════════════════════════
+   PLAYER SCREEN
+══════════════════════════════════════ */
+.player-screen{overflow:hidden}
+.player-header{
+  padding:max(14px,var(--safe-top)) 16px 12px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:flex-start;gap:12px;
+  flex-shrink:0;
+}
+.back-btn{
+  width:34px;height:34px;border-radius:9px;border:1px solid var(--border2);
+  background:transparent;color:var(--text);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  margin-top:2px;-webkit-appearance:none;
+}
+.ph-cover{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;background:var(--surface2)}
+.ph-meta{flex:1;min-width:0}
+.ph-title{font-size:16px;font-weight:600;line-height:1.2;margin-bottom:3px}
+.ph-sub{font-size:12px;color:var(--muted);line-height:1.4}
+.ph-tags{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}
+.ph-tag{font-size:10px;padding:2px 7px;border-radius:99px;background:var(--surface2);color:var(--muted)}
+
+.np-bar{
+  padding:9px 16px;background:var(--surface);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:9px;flex-shrink:0;
+}
+.av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0}
+.av-host1{background:var(--accent-bg);color:var(--accent)}
+.av-host2{background:var(--purple-bg);color:var(--purple)}
+.av-guest{background:var(--green-bg);color:var(--green)}
+.av-narrator{background:var(--amber-bg);color:var(--amber)}
+.np-info{flex:1;min-width:0}
+.np-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.np-seg{font-size:11px;color:var(--muted)}
+.fiction-pill{font-size:10px;padding:2px 7px;border-radius:99px;background:var(--amber-bg);color:var(--amber);white-space:nowrap;display:none}
+.fiction-pill.show{display:block}
+
+.player-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.ptab{flex:1;padding:9px;text-align:center;font-size:12px;color:var(--muted);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;-webkit-appearance:none}
+.ptab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+.ppane{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;display:none}
+.ppane.active{display:block}
+
+/* Transcript */
+.seg-block{border-bottom:1px solid var(--border)}
+.seg-hd{
+  padding:10px 16px;background:var(--surface);
+  display:flex;align-items:center;gap:8px;
+  position:sticky;top:0;z-index:2;cursor:pointer;
+}
+.seg-badge{font-size:10px;padding:2px 8px;border-radius:99px;flex-shrink:0}
+.badge-intro{background:var(--accent-bg);color:var(--accent)}
+.badge-facts{background:var(--green-bg);color:var(--green)}
+.badge-story{background:var(--amber-bg);color:var(--amber)}
+.badge-interview{background:var(--purple-bg);color:var(--purple)}
+.badge-debate{background:var(--red-bg);color:var(--red)}
+.badge-wrap{background:var(--surface2);color:var(--muted)}
+.seg-name{font-size:13px;font-weight:500;flex:1}
+.seg-dur{font-size:11px;color:var(--muted)}
+.seg-chev{font-size:9px;color:var(--muted);transition:transform 0.2s;margin-left:4px}
+.seg-chev.open{transform:rotate(90deg)}
+.seg-lines{display:none;padding:4px 0 8px}
+.seg-lines.open{display:block}
+
+.line-block{
+  padding:9px 16px;border-left:3px solid transparent;cursor:pointer;
+  transition:background 0.1s;
+}
+.line-block:active,.line-block.active-line{background:rgba(59,130,246,0.06)}
+.line-block.active-line.r-host1{border-left-color:var(--accent)}
+.line-block.active-line.r-host2{border-left-color:var(--purple)}
+.line-block.active-line.r-guest{border-left-color:var(--green)}
+.line-block.r-narrator{background:var(--amber-bg);border-left:3px solid var(--amber)}
+.line-speaker{font-size:11px;font-weight:700;margin-bottom:3px;letter-spacing:0.02em}
+.ls-host1{color:var(--accent)}
+.ls-host2{color:var(--purple)}
+.ls-guest{color:var(--green)}
+.ls-narrator{color:var(--amber)}
+.line-text{font-size:13px;line-height:1.7;color:var(--text)}
+.line-text.narrator-text{font-style:italic;color:#fde68a}
+.src-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.src-chip{
+  display:inline-flex;align-items:center;gap:3px;
+  font-size:10px;padding:3px 7px;border-radius:99px;
+  background:var(--green-bg);color:var(--green);
+  border:1px solid rgba(52,211,153,0.2);
+  text-decoration:none;cursor:pointer;-webkit-appearance:none;
+  border:none;font-family:inherit;
+}
+.src-chip svg{width:9px;height:9px;flex-shrink:0}
+
+/* Chapters */
+.ch-item{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;
+}
+.ch-item:active,.ch-item.active-ch{background:var(--accent-bg)}
+.ch-num{font-size:12px;color:var(--muted);min-width:18px;text-align:right}
+.ch-body{flex:1;min-width:0}
+.ch-title{font-size:14px;font-weight:500}
+.ch-item.active-ch .ch-title{color:var(--accent)}
+.ch-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.ch-dur{font-size:12px;color:var(--muted);flex-shrink:0}
+
+/* Sources */
+.sources-wrap{padding:16px}
+.sources-note{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:14px;padding:10px 12px;background:var(--surface);border-radius:10px;border-left:3px solid var(--green)}
+.src-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px}
+.src-card-title{font-size:13px;font-weight:500;line-height:1.4;margin-bottom:3px}
+.src-card-meta{font-size:11px;color:var(--muted);margin-bottom:8px}
+.src-card-claim{font-size:12px;color:var(--muted);line-height:1.5;font-style:italic;margin-bottom:10px;padding-left:10px;border-left:2px solid var(--border2)}
+.src-link{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--accent);text-decoration:none}
+.src-link svg{width:10px;height:10px}
+
+/* Player bar */
+.player-bar{
+  background:var(--surface);border-top:1px solid var(--border);
+  padding:12px 16px;padding-bottom:max(12px,var(--safe-bottom));
+  flex-shrink:0;
+}
+.prog-bg{width:100%;height:4px;background:var(--surface2);border-radius:2px;cursor:pointer;margin-bottom:6px}
+.prog-fill{height:100%;background:var(--accent);border-radius:2px;width:0%;transition:width 0.25s linear;pointer-events:none}
+.prog-times{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:10px}
+.ctrl-row{display:flex;align-items:center;gap:8px}
+.cbtn{
+  height:38px;min-width:38px;padding:0 10px;
+  border-radius:10px;border:1px solid var(--border2);
+  background:transparent;color:var(--text);
+  font-size:12px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:4px;
+  -webkit-appearance:none;transition:background 0.1s;
+}
+.cbtn:active{background:var(--surface2);transform:scale(0.96)}
+.cbtn.play{width:48px;height:48px;border-radius:50%;background:var(--accent);border-color:transparent;min-width:0;padding:0}
+.cbtn.play:active{background:#2563eb}
+.cbtn svg{width:15px;height:15px;flex-shrink:0}
+.cbtn.play svg{width:17px;height:17px}
+.vol-wrap{display:flex;align-items:center;gap:5px;margin-left:auto}
+.vol-wrap svg{width:13px;height:13px;color:var(--muted);flex-shrink:0}
+input[type=range]{-webkit-appearance:none;appearance:none;width:65px;height:4px;background:var(--surface2);border-radius:2px;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--accent);cursor:pointer;border:none}
+
+/* Modal / source detail */
+.modal-overlay{display:none;position:absolute;inset:0;background:rgba(0,0,0,0.7);z-index:100;align-items:flex-end;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:var(--surface);border-radius:16px 16px 0 0;padding:20px;padding-bottom:max(20px,var(--safe-bottom));width:100%;max-width:700px;max-height:75vh;overflow-y:auto}
+.modal-handle{width:36px;height:4px;border-radius:2px;background:var(--surface3);margin:0 auto 16px}
+.modal-title{font-size:16px;font-weight:600;margin-bottom:4px}
+.modal-meta{font-size:12px;color:var(--muted);margin-bottom:12px}
+.modal-claim{font-size:13px;line-height:1.6;color:var(--muted);font-style:italic;padding:10px 12px;background:var(--surface2);border-radius:8px;margin-bottom:14px}
+.modal-url{font-size:12px;color:var(--accent);word-break:break-all;display:flex;align-items:flex-start;gap:5px;text-decoration:none}
+.modal-url svg{width:12px;height:12px;flex-shrink:0;margin-top:2px}
+.modal-close{display:block;margin-top:16px;text-align:center;font-size:13px;color:var(--muted);cursor:pointer;padding:8px}
+
+/* Scrollbar */
+.ppane::-webkit-scrollbar,.search-screen::-webkit-scrollbar{width:4px}
+.ppane::-webkit-scrollbar-thumb,.search-screen::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:2px}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- ══ SEARCH SCREEN ══ -->
+  <div class="screen active" id="screen-search">
+    <div class="search-screen">
+      <div class="search-header">
+        <div class="logo-row">
+          <div class="logo-icon">
+            <svg viewBox="0 0 20 20" fill="none" stroke="#3b82f6" stroke-width="1.5">
+              <circle cx="10" cy="10" r="7"/>
+              <circle cx="10" cy="10" r="2.5" fill="#3b82f6" stroke="none"/>
+              <line x1="10" y1="3" x2="10" y2="1"/>
+              <line x1="10" y1="17" x2="10" y2="19"/>
+              <line x1="3" y1="10" x2="1" y2="10"/>
+              <line x1="17" y1="10" x2="19" y2="10"/>
+            </svg>
+          </div>
+          <span class="logo-title">PodGen</span>
+        </div>
+        <div class="logo-sub">Search any topic. Get a real, sourced podcast you can listen to.</div>
+      </div>
+
+      <div class="search-box">
+        <div class="search-input-wrap">
+          <input type="text" class="search-input" id="topicInput" placeholder="e.g. CRISPR, housing crisis, black holes..." autocomplete="off" autocorrect="off" spellcheck="false">
+          <button class="gen-btn" id="genBtn" onclick="startGenerate()">Generate</button>
+        </div>
+        <div class="format-row" id="formatRow">
+          <button class="fmt-btn active" data-fmt="news-dive">News deep-dive</button>
+          <button class="fmt-btn" data-fmt="interview">Interview</button>
+          <button class="fmt-btn" data-fmt="debate">Panel debate</button>
+          <button class="fmt-btn" data-fmt="explainer">Explainer</button>
+        </div>
+      </div>
+
+      <div class="api-key-section">
+        <div class="api-key-label">
+          <span>Anthropic API Key</span>
+          <a class="api-key-link" href="https://console.anthropic.com/keys" target="_blank" rel="noopener">Get a key →</a>
+        </div>
+        <input type="password" class="api-key-input" id="apiKeyInput" placeholder="sk-ant-..." autocomplete="off" oninput="saveKey()">
+        <div class="api-key-note">Your key is stored only in your browser (localStorage). Never sent anywhere except directly to Anthropic's API.</div>
+      </div>
+
+      <div class="suggestions-section">
+        <div class="section-label">Try these</div>
+        <div class="sug-grid" id="sugGrid"></div>
+      </div>
+
+      <div class="history-section" id="historySection" style="display:none">
+        <div class="section-label">Recent episodes</div>
+        <div id="historyList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ GENERATING SCREEN ══ -->
+  <div class="screen" id="screen-generating">
+    <div class="gen-screen">
+      <div class="gen-icon">
+        <svg viewBox="0 0 32 32" fill="none" stroke="#3b82f6" stroke-width="1.5">
+          <circle cx="16" cy="16" r="11"/>
+          <circle cx="16" cy="16" r="4" fill="#3b82f6" stroke="none"/>
+          <line x1="16" y1="5" x2="16" y2="2"/>
+          <line x1="16" y1="27" x2="16" y2="30"/>
+          <line x1="5" y1="16" x2="2" y2="16"/>
+          <line x1="27" y1="16" x2="30" y2="16"/>
+        </svg>
+      </div>
+      <div class="gen-title">Generating your podcast</div>
+      <div class="gen-topic" id="genTopicLabel"></div>
+      <div class="gen-steps">
+        <div class="gen-step" id="step1"><span class="step-dot"></span>Searching for current information</div>
+        <div class="gen-step" id="step2"><span class="step-dot"></span>Verifying facts and sources</div>
+        <div class="gen-step" id="step3"><span class="step-dot"></span>Writing the script</div>
+        <div class="gen-step" id="step4"><span class="step-dot"></span>Building your player</div>
+      </div>
+      <div class="gen-error" id="genError" style="display:none"></div>
+      <button class="gen-cancel" onclick="cancelGenerate()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- ══ PLAYER SCREEN ══ -->
+  <div class="screen" id="screen-player">
+    <div class="player-header">
+      <button class="back-btn" onclick="goBack()" aria-label="Back">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M9 2L4 7l5 5"/></svg>
+      </button>
+      <div class="ph-cover" id="phCover">🎙</div>
+      <div class="ph-meta">
+        <div class="ph-title" id="phTitle">Episode Title</div>
+        <div class="ph-sub" id="phSub">Subtitle here</div>
+        <div class="ph-tags" id="phTags"></div>
+      </div>
+    </div>
+
+    <div class="np-bar">
+      <div class="av av-host1" id="npAv">H1</div>
+      <div class="np-info">
+        <div class="np-name" id="npName">—</div>
+        <div class="np-seg" id="npSeg">—</div>
+      </div>
+      <div class="fiction-pill" id="fictionPill">illustrative fiction</div>
+    </div>
+
+    <div class="player-tabs">
+      <button class="ptab active" onclick="switchPTab('transcript',this)">Transcript</button>
+      <button class="ptab" onclick="switchPTab('chapters',this)">Chapters</button>
+      <button class="ptab" onclick="switchPTab('sources',this)">Sources</button>
+    </div>
+
+    <div class="ppane active" id="ppane-transcript"><div id="transcriptContent"></div></div>
+    <div class="ppane" id="ppane-chapters"><div id="chaptersContent"></div></div>
+    <div class="ppane" id="ppane-sources"><div class="sources-wrap"><div class="sources-note">Every factual claim in this episode is backed by a real source. Tap any green badge in the transcript, or browse all sources below. Links open the original paper or article.</div><div id="sourcesContent"></div></div></div>
+
+    <div class="player-bar">
+      <div class="prog-bg" id="progBg" onclick="seekClick(event)">
+        <div class="prog-fill" id="progFill"></div>
+      </div>
+      <div class="prog-times"><span id="elapsed">0:00</span><span id="totalTime">0:00</span></div>
+      <div class="ctrl-row">
+        <button class="cbtn" onclick="skip(-15)" aria-label="Back 15s">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/><path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466z"/></svg>
+          <span style="font-size:10px">15</span>
+        </button>
+        <button class="cbtn play" id="playBtn" onclick="togglePlay()">
+          <svg id="playIcon" viewBox="0 0 16 16" fill="currentColor"><path d="M6 3.5l7 4.5-7 4.5V3.5z"/></svg>
+        </button>
+        <button class="cbtn" onclick="skip(15)" aria-label="Forward 15s">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2v1z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/></svg>
+          <span style="font-size:10px">15</span>
+        </button>
+        <button class="cbtn" id="speedBtn" onclick="cycleSpeed()"><span id="speedLabel" style="font-size:12px;font-weight:600">1x</span></button>
+        <div class="vol-wrap">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M9 4a.5.5 0 0 0-.812-.39L5.825 5.5H3.5A.5.5 0 0 0 3 6v4a.5.5 0 0 0 .5.5h2.325l2.363 1.89A.5.5 0 0 0 9 12V4z"/><path d="M11.536 7.07a.5.5 0 0 1 .707.707 4 4 0 0 1 0 4.446.5.5 0 0 1-.707-.707 3 3 0 0 0 0-3.032.5.5 0 0 1 0-.414z"/></svg>
+          <input type="range" min="0" max="1" step="0.05" value="1" id="volSlider" oninput="setVol(this.value)" aria-label="Volume">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Source detail modal -->
+  <div class="modal-overlay" id="srcModal" onclick="closeModal(event)">
+    <div class="modal">
+      <div class="modal-handle"></div>
+      <div class="modal-title" id="mdTitle"></div>
+      <div class="modal-meta" id="mdMeta"></div>
+      <div class="modal-claim" id="mdClaim"></div>
+      <a class="modal-url" id="mdUrl" target="_blank" rel="noopener">
+        <svg viewBox="0 0 12 12" fill="currentColor"><path d="M1 1h5v1H2v8h8V6h1v5H1V1zm6 0h4v4H10V2.7L6.35 6.35l-.7-.7L9.3 2H7V1z"/></svg>
+        <span id="mdUrlText"></span>
+      </a>
+      <div class="modal-close" onclick="document.getElementById('srcModal').classList.remove('show')">Close</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── State ─────────────────────────────────────────────────────────────────
+let currentPodcast = null;
+let allLines = [];
+let playing = false;
+let elapsed = 0;
+let lineIdx = 0;
+let totalSecs = 0;
+let speeds = [0.75, 1, 1.25, 1.5, 2];
+let speedIdx = 1;
+let synth = window.speechSynthesis;
+let voices = [];
+let currentUtt = null;
+let genAborted = false;
+let history = [];
+
+// ── Suggestions ───────────────────────────────────────────────────────────
+const SUGGESTIONS = [
+  { emoji: '🧬', title: 'CRISPR gene editing breakthroughs', fmt: 'news-dive' },
+  { emoji: '🏠', title: 'The global housing affordability crisis', fmt: 'debate' },
+  { emoji: '🤖', title: 'AI regulation — where are we in 2025?', fmt: 'news-dive' },
+  { emoji: '🚀', title: 'SpaceX vs NASA: the new space race', fmt: 'debate' },
+  { emoji: '🧠', title: 'Sleep science — why 8 hours matters', fmt: 'explainer' },
+  { emoji: '💊', title: 'GLP-1 drugs: the real story on Ozempic', fmt: 'interview' },
+  { emoji: '🌍', title: 'Climate tipping points — latest IPCC data', fmt: 'news-dive' },
+  { emoji: '⚡', title: 'Nuclear fusion: are we finally there?', fmt: 'explainer' }
+];
+
+const FORMAT_LABELS = {
+  'news-dive': 'News deep-dive',
+  'interview': 'Interview',
+  'debate': 'Panel debate',
+  'explainer': 'Explainer'
+};
+
+// ── Init ──────────────────────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  loadVoices();
+  if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.onvoiceschanged = loadVoices;
+  const savedKey = localStorage.getItem('podgen_api_key') || '';
+  document.getElementById('apiKeyInput').value = savedKey;
+  buildSuggestions();
+  loadHistory();
+  document.getElementById('topicInput').addEventListener('keydown', e => { if (e.key === 'Enter') startGenerate(); });
+  document.querySelectorAll('.fmt-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.fmt-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+});
+
+function saveKey() {
+  const k = document.getElementById('apiKeyInput').value.trim();
+  if (k) localStorage.setItem('podgen_api_key', k);
+}
+
+function buildSuggestions() {
+  document.getElementById('sugGrid').innerHTML = SUGGESTIONS.map(s => `
+    <div class="sug-card" onclick="useSuggestion('${s.title.replace(/'/g,"\\'")}','${s.fmt}')">
+      <div class="sug-emoji">${s.emoji}</div>
+      <div class="sug-title">${s.title}</div>
+      <div class="sug-meta">${FORMAT_LABELS[s.fmt]}</div>
+    </div>`).join('');
+}
+
+function useSuggestion(title, fmt) {
+  document.getElementById('topicInput').value = title;
+  document.querySelectorAll('.fmt-btn').forEach(b => b.classList.toggle('active', b.dataset.fmt === fmt));
+  startGenerate();
+}
+
+function loadHistory() {
+  try { history = JSON.parse(localStorage.getItem('podgen_history') || '[]'); } catch { history = []; }
+  renderHistory();
+}
+
+function saveHistory(pod) {
+  const entry = { id: Date.now(), title: pod.title, topic: pod.topic, emoji: pod.emoji || '🎙', fmt: pod.format, dur: pod.duration_minutes, ts: new Date().toLocaleDateString(), data: pod };
+  history.unshift(entry);
+  if (history.length > 10) history = history.slice(0, 10);
+  localStorage.setItem('podgen_history', JSON.stringify(history));
+  renderHistory();
+}
+
+function renderHistory() {
+  const sec = document.getElementById('historySection');
+  const list = document.getElementById('historyList');
+  if (!history.length) { sec.style.display = 'none'; return; }
+  sec.style.display = 'block';
+  list.innerHTML = history.map((h, i) => `
+    <div class="hist-item" onclick="loadFromHistory(${i})">
+      <div class="hist-icon">${h.emoji}</div>
+      <div class="hist-body">
+        <div class="hist-title">${h.title}</div>
+        <div class="hist-meta">${h.fmt ? FORMAT_LABELS[h.fmt] || h.fmt : ''} · ${h.dur || '?'} min · ${h.ts}</div>
+      </div>
+      <span class="hist-play">▶</span>
+    </div>`).join('');
+}
+
+function loadFromHistory(i) {
+  openPlayer(history[i].data);
+}
+
+// ── Screen switching ──────────────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+}
+
+function goBack() {
+  stopPlay();
+  showScreen('search');
+}
+
+// ── Generate ──────────────────────────────────────────────────────────────
+function getSelectedFmt() {
+  const btn = document.querySelector('.fmt-btn.active');
+  return btn ? btn.dataset.fmt : 'news-dive';
+}
+
+async function startGenerate() {
+  const topic = document.getElementById('topicInput').value.trim();
+  const apiKey = document.getElementById('apiKeyInput').value.trim();
+  if (!topic) { document.getElementById('topicInput').focus(); return; }
+  if (!apiKey || !apiKey.startsWith('sk-ant-')) {
+    alert('Please enter a valid Anthropic API key (starts with sk-ant-). Get one free at console.anthropic.com/keys');
+    document.getElementById('apiKeyInput').focus();
+    return;
+  }
+
+  const fmt = getSelectedFmt();
+  genAborted = false;
+  showScreen('generating');
+  document.getElementById('genTopicLabel').textContent = '"' + topic + '"';
+  document.getElementById('genError').style.display = 'none';
+  setGenStep(1);
+
+  const fmtDescriptions = {
+    'news-dive': 'a news deep-dive with two hosts named Alex Chen (host) and Sarah Miles (co-host). They discuss real recent facts, cite experts and organisations by name, debate nuance, and close with a clearly-labelled illustrative fiction "story" segment that humanises the topic',
+    'interview': 'a one-on-one interview where host Alex Chen interviews a named fictional but realistic expert in the field (give them a full name, title, and institution). They discuss real research and data. Include a short illustrative fiction segment mid-episode',
+    'debate': 'a panel debate where host Alex Chen moderates two guests with opposing views (give each a full name and affiliation). Ground every claim in real data. Include an illustrative fiction segment',
+    'explainer': 'an explainer-style podcast with host Alex Chen and co-host Sam Rivera. Break the topic down step-by-step with real data. Include an illustrative fiction segment at the end before the verdict'
+  };
+
+  const systemPrompt = `You are a professional podcast script writer and researcher. You MUST use the web_search tool multiple times to find current, real, verified facts before writing anything. 
+
+Rules:
+- Every factual claim must be backed by a real source (real paper, real organisation, real publication)
+- Never invent statistics, quotes, or events
+- Illustrative fiction segments must be clearly separated and labelled as fiction
+- Speakers must sound like real intelligent people, not AI
+- Include natural interruptions, agreements, pushbacks between hosts
+
+Respond ONLY with valid JSON. No markdown. No preamble. No backticks.
+
+JSON structure:
+{
+  "title": "Episode title (catchy, specific)",
+  "subtitle": "One punchy sentence",
+  "topic": "the topic",
+  "format": "${fmt}",
+  "emoji": "single most relevant emoji",
+  "duration_minutes": number,
+  "tags": ["tag1","tag2","tag3","tag4"],
+  "sources": [
+    {
+      "id": "s1",
+      "title": "Author/Org — Paper/Article title",
+      "publication": "Journal or publication name",
+      "year": "year",
+      "claim": "The specific claim this source supports (1-2 sentences)",
+      "url": "real URL"
+    }
+  ],
+  "segments": [
+    {
+      "id": "unique_id",
+      "type": "intro|facts|story|interview|debate|wrap",
+      "title": "Segment title",
+      "duration_min": number,
+      "lines": [
+        {
+          "speaker": "Full Name",
+          "role": "host1|host2|guest|narrator",
+          "text": "What they say (2-5 sentences, natural speech)",
+          "source_ids": ["s1"]
+        }
+      ]
+    }
+  ]
+}
+
+For story/narrator segments: role must be "narrator". Begin the text with "Imagine..." or similar. These are clearly illustrative fiction.
+For interview format: use host1 for interviewer, guest for interviewee.
+For debate format: use host1 for moderator, host2 and guest for the two debaters.
+Make it 20-30 minutes. Include 4-7 segments. Include 4-8 real sources.`;
+
+  const userPrompt = `Search the web for current, real information, then write ${fmtDescriptions[fmt]} about: "${topic}".
+
+Search at least 3-4 times for different angles: recent news, scientific research, expert opinions, statistics.
+
+Then produce the full podcast JSON.`;
+
+  try {
+    setGenStep(2);
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-beta': 'prompt-caching-2024-07-31' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 8000,
+        system: systemPrompt,
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        messages: [{ role: 'user', content: userPrompt }]
+      })
+    });
+
+    if (genAborted) return;
+
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      const msg = err.error?.message || `API error ${response.status}`;
+      if (response.status === 401) throw new Error('Invalid API key. Check your key at console.anthropic.com');
+      if (response.status === 529) throw new Error('Anthropic API is overloaded. Please try again in a moment.');
+      throw new Error(msg);
+    }
+
+    setGenStep(3);
+    const data = await response.json();
+    if (genAborted) return;
+
+    const fullText = data.content.filter(b => b.type === 'text').map(b => b.text).join('\n');
+    const jsonMatch = fullText.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('Could not parse response. Please try again.');
+
+    let podcast;
+    try { podcast = JSON.parse(jsonMatch[0]); }
+    catch (e) { throw new Error('JSON parse error. Please try again.'); }
+
+    podcast.format = fmt;
+    setGenStep(4);
+    await new Promise(r => setTimeout(r, 400));
+    if (genAborted) return;
+
+    saveHistory(podcast);
+    openPlayer(podcast);
+
+  } catch (err) {
+    if (genAborted) return;
+    const errEl = document.getElementById('genError');
+    errEl.textContent = err.message;
+    errEl.style.display = 'block';
+    document.querySelectorAll('.gen-step').forEach(s => { s.classList.remove('active','done'); });
+  }
+}
+
+function setGenStep(n) {
+  ['step1','step2','step3','step4'].forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.classList.remove('active','done');
+    if (i + 1 < n) el.classList.add('done');
+    else if (i + 1 === n) el.classList.add('active');
+  });
+}
+
+function cancelGenerate() {
+  genAborted = true;
+  showScreen('search');
+}
+
+// ── Build & open player ───────────────────────────────────────────────────
+function openPlayer(pod) {
+  currentPodcast = pod;
+  totalSecs = (pod.duration_minutes || 25) * 60;
+  elapsed = 0; lineIdx = 0; playing = false;
+  synth.cancel();
+
+  // Header
+  document.getElementById('phCover').textContent = pod.emoji || '🎙';
+  document.getElementById('phTitle').textContent = pod.title;
+  document.getElementById('phSub').textContent = pod.subtitle;
+  document.getElementById('phTags').innerHTML = (pod.tags || []).map(t => `<span class="ph-tag">${t}</span>`).join('') + `<span class="ph-tag">${pod.duration_minutes || '?'} min</span>`;
+  document.getElementById('totalTime').textContent = fmt(totalSecs);
+  document.getElementById('playIcon').innerHTML = '<path d="M6 3.5l7 4.5-7 4.5V3.5z"/>';
+
+  // Build flat line list
+  allLines = [];
+  (pod.segments || []).forEach((seg, si) => {
+    (seg.lines || []).forEach((ln, li) => {
+      allLines.push({ ...ln, si, li, segId: seg.id, segTitle: seg.title, segType: seg.type });
+    });
+  });
+
+  buildTranscript(pod);
+  buildChapters(pod);
+  buildSources(pod);
+  updateNowPlaying(0);
+  updateProgress();
+
+  switchPTab('transcript', document.querySelector('.ptab'));
+  showScreen('player');
+}
+
+function buildTranscript(pod) {
+  const sources = pod.sources || [];
+  document.getElementById('transcriptContent').innerHTML = (pod.segments || []).map((seg, si) => {
+    const bc = { intro:'badge-intro', facts:'badge-facts', story:'badge-story', interview:'badge-interview', debate:'badge-debate', wrap:'badge-wrap' }[seg.type] || 'badge-wrap';
+    const lines = (seg.lines || []).map((ln, li) => {
+      const globalIdx = allLines.findIndex(l => l.si === si && l.li === li);
+      const rc = { host1:'r-host1', host2:'r-host2', guest:'r-guest', narrator:'r-narrator' }[ln.role] || 'r-host1';
+      const lc = { host1:'ls-host1', host2:'ls-host2', guest:'ls-guest', narrator:'ls-narrator' }[ln.role] || 'ls-host1';
+      const srcs = (ln.source_ids || []).map(sid => {
+        const s = sources.find(x => x.id === sid);
+        return s ? `<button class="src-chip" onclick="showSource('${sid}')" data-sid="${sid}">
+          <svg viewBox="0 0 10 10" fill="currentColor"><path d="M1 1h4v1H2v6h6V5h1v4H1V1zm5 0h3v3H8V2.7L4.85 5.85l-.7-.7L7.3 2H6V1z"/></svg>
+          ${s.title.split('—')[0].trim().substring(0, 30)}…
+        </button>` : '';
+      }).join('');
+      return `<div class="line-block ${rc}" id="line-${globalIdx}" onclick="jumpToLine(${globalIdx})">
+        <div class="line-speaker ${lc}">${ln.speaker}</div>
+        <div class="line-text${ln.role==='narrator'?' narrator-text':''}">${ln.text}</div>
+        ${srcs ? `<div class="src-row">${srcs}</div>` : ''}
+      </div>`;
+    }).join('');
+    return `<div class="seg-block">
+      <div class="seg-hd" onclick="toggleSeg('sl-${si}',this)">
+        <span class="seg-badge ${bc}">${seg.type}</span>
+        <span class="seg-name">${seg.title}</span>
+        <span class="seg-dur">${seg.duration_min || '?'} min</span>
+        <span class="seg-chev open">▶</span>
+      </div>
+      <div class="seg-lines open" id="sl-${si}">${lines}</div>
+    </div>`;
+  }).join('');
+}
+
+function buildChapters(pod) {
+  document.getElementById('chaptersContent').innerHTML = (pod.segments || []).map((seg, i) => {
+    const bc = { intro:'badge-intro', facts:'badge-facts', story:'badge-story', interview:'badge-interview', debate:'badge-debate', wrap:'badge-wrap' }[seg.type] || 'badge-wrap';
+    return `<div class="ch-item${i===0?' active-ch':''}" id="chi-${i}" onclick="jumpToChapter(${i})">
+      <span class="ch-num">${i+1}</span>
+      <div class="ch-body">
+        <div class="ch-title">${seg.title}</div>
+        <div class="ch-sub"><span class="seg-badge ${bc}" style="font-size:9px;padding:1px 6px">${seg.type}</span></div>
+      </div>
+      <span class="ch-dur">${seg.duration_min || '?'} min</span>
+    </div>`;
+  }).join('');
+}
+
+function buildSources(pod) {
+  document.getElementById('sourcesContent').innerHTML = (pod.sources || []).map(s => `
+    <div class="src-card" id="srcc-${s.id}">
+      <div class="src-card-title">${s.title}</div>
+      <div class="src-card-meta">${s.publication || ''} ${s.year ? '· ' + s.year : ''}</div>
+      <div class="src-card-claim">${s.claim}</div>
+      <a class="src-link" href="${s.url}" target="_blank" rel="noopener">
+        Read original <svg viewBox="0 0 11 11" fill="currentColor"><path d="M1 1h4v1H2v7h7V6h1v4H1V1zm5 0h4v4H9V2.7L5.35 6.35l-.7-.7L8.3 2H6V1z"/></svg>
+      </a>
+    </div>`).join('');
+}
+
+function showSource(sid) {
+  if (!currentPodcast) return;
+  const s = (currentPodcast.sources || []).find(x => x.id === sid);
+  if (!s) return;
+  document.getElementById('mdTitle').textContent = s.title;
+  document.getElementById('mdMeta').textContent = [s.publication, s.year].filter(Boolean).join(' · ');
+  document.getElementById('mdClaim').textContent = s.claim;
+  document.getElementById('mdUrl').href = s.url;
+  document.getElementById('mdUrlText').textContent = s.url;
+  document.getElementById('srcModal').classList.add('show');
+}
+
+function closeModal(e) {
+  if (e.target.id === 'srcModal') document.getElementById('srcModal').classList.remove('show');
+}
+
+function toggleSeg(id, hd) {
+  const el = document.getElementById(id);
+  const chev = hd.querySelector('.seg-chev');
+  el.classList.toggle('open');
+  chev.classList.toggle('open');
+}
+
+function switchPTab(name, btn) {
+  document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.ppane').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('ppane-' + name).classList.add('active');
+}
+
+// ── Voices ────────────────────────────────────────────────────────────────
+function loadVoices() { voices = synth.getVoices(); }
+
+function pickVoice(role) {
+  const all = voices.length ? voices : synth.getVoices();
+  const en = all.filter(v => v.lang.startsWith('en'));
+  if (role === 'narrator') {
+    return en.find(v => /moira|tessa|fiona|kate|serena/i.test(v.name)) ||
+           en.find(v => v.lang === 'en-GB') || en[0] || null;
+  } else if (role === 'host2' || role === 'guest') {
+    return en.find(v => /samantha|zira|karen|victoria|allison|ava|alice/i.test(v.name)) ||
+           en.find(v => /female|woman/i.test(v.name)) ||
+           en[Math.min(1, en.length - 1)] || en[0] || null;
+  } else {
+    return en.find(v => /daniel|david|aaron|fred|rishi|oliver|mark/i.test(v.name)) ||
+           en.find(v => /male|man/i.test(v.name)) ||
+           en[0] || null;
+  }
+}
+
+// ── Playback ──────────────────────────────────────────────────────────────
+function fmt(s) {
+  s = Math.max(0, Math.floor(s));
+  return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+}
+
+function updateProgress() {
+  const pct = totalSecs > 0 ? Math.min(100, (elapsed / totalSecs) * 100) : 0;
+  document.getElementById('progFill').style.width = pct.toFixed(1) + '%';
+  document.getElementById('elapsed').textContent = fmt(elapsed);
+  document.getElementById('totalTime').textContent = fmt(totalSecs);
+}
+
+function updateNowPlaying(li) {
+  if (!allLines.length) return;
+  const line = allLines[Math.min(li, allLines.length - 1)];
+  if (!line) return;
+  const isNarrator = line.role === 'narrator';
+  const avClass = { host1:'av-host1', host2:'av-host2', guest:'av-guest', narrator:'av-narrator' }[line.role] || 'av-host1';
+  const av = document.getElementById('npAv');
+  av.className = 'av ' + avClass;
+  av.textContent = isNarrator ? 'N' : (line.speaker || '').split(' ').map(w => w[0]).slice(0,2).join('');
+  document.getElementById('npName').textContent = line.speaker;
+  document.getElementById('npSeg').textContent = line.segTitle;
+  document.getElementById('fictionPill').className = 'fiction-pill' + (isNarrator ? ' show' : '');
+
+  // Highlight chapter
+  (currentPodcast.segments || []).forEach((_, i) => {
+    const el = document.getElementById('chi-' + i);
+    if (el) el.classList.toggle('active-ch', i === line.si);
+  });
+
+  // Highlight transcript line
+  document.querySelectorAll('.line-block').forEach(el => el.classList.remove('active-line'));
+  const lineEl = document.getElementById('line-' + li);
+  if (lineEl) {
+    lineEl.classList.add('active-line');
+    const pane = document.getElementById('ppane-transcript');
+    const paneTop = pane.scrollTop;
+    const paneH = pane.clientHeight;
+    const elTop = lineEl.offsetTop;
+    if (elTop < paneTop || elTop > paneTop + paneH - 80) {
+      lineEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+}
+
+function speakLine(idx) {
+  if (!playing || idx >= allLines.length) { if (idx >= allLines.length) { stopPlay(); } return; }
+  lineIdx = idx;
+  elapsed = (idx / allLines.length) * totalSecs;
+  updateProgress();
+  updateNowPlaying(idx);
+  synth.cancel();
+  const line = allLines[idx];
+  const utt = new SpeechSynthesisUtterance(line.text);
+  utt.rate = speeds[speedIdx];
+  utt.pitch = line.role === 'narrator' ? 0.88 : (line.role === 'host2' ? 1.1 : line.role === 'guest' ? 1.05 : 1.0);
+  utt.volume = parseFloat(document.getElementById('volSlider').value);
+  const v = pickVoice(line.role);
+  if (v) utt.voice = v;
+  utt.onend = () => { if (playing) speakLine(idx + 1); };
+  utt.onerror = e => { if (e.error !== 'interrupted' && playing) speakLine(idx + 1); };
+  currentUtt = utt;
+  synth.speak(utt);
+}
+
+function togglePlay() {
+  playing ? pausePlay() : startPlay();
+}
+
+function startPlay() {
+  if (!allLines.length) return;
+  playing = true;
+  document.getElementById('playIcon').innerHTML = '<rect x="4" y="3" width="3" height="10" rx="1"/><rect x="9" y="3" width="3" height="10" rx="1"/>';
+  const startLine = Math.min(allLines.length - 1, Math.floor((elapsed / totalSecs) * allLines.length));
+  speakLine(startLine);
+}
+
+function pausePlay() {
+  playing = false;
+  synth.pause();
+  document.getElementById('playIcon').innerHTML = '<path d="M6 3.5l7 4.5-7 4.5V3.5z"/>';
+}
+
+function stopPlay() {
+  playing = false;
+  synth.cancel();
+  document.getElementById('playIcon').innerHTML = '<path d="M6 3.5l7 4.5-7 4.5V3.5z"/>';
+}
+
+function skip(secs) {
+  elapsed = Math.max(0, Math.min(totalSecs - 1, elapsed + secs));
+  const newLine = Math.min(allLines.length - 1, Math.floor((elapsed / totalSecs) * allLines.length));
+  if (playing) { synth.cancel(); speakLine(newLine); }
+  else { lineIdx = newLine; updateProgress(); updateNowPlaying(newLine); }
+}
+
+function jumpToChapter(ci) {
+  const firstLine = allLines.findIndex(l => l.si === ci);
+  if (firstLine < 0) return;
+  elapsed = (firstLine / allLines.length) * totalSecs;
+  lineIdx = firstLine;
+  updateProgress();
+  updateNowPlaying(firstLine);
+  if (playing) { synth.cancel(); speakLine(firstLine); }
+  switchPTab('transcript', document.querySelectorAll('.ptab')[0]);
+  document.getElementById('sl-' + ci + '')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function jumpToLine(idx) {
+  elapsed = (idx / allLines.length) * totalSecs;
+  lineIdx = idx;
+  updateProgress();
+  updateNowPlaying(idx);
+  if (playing) { synth.cancel(); speakLine(idx); }
+}
+
+function seekClick(e) {
+  const rect = e.currentTarget.getBoundingClientRect();
+  const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  elapsed = pct * totalSecs;
+  const newLine = Math.min(allLines.length - 1, Math.floor(pct * allLines.length));
+  lineIdx = newLine;
+  updateProgress();
+  updateNowPlaying(newLine);
+  if (playing) { synth.cancel(); speakLine(newLine); }
+}
+
+function cycleSpeed() {
+  speedIdx = (speedIdx + 1) % speeds.length;
+  document.getElementById('speedLabel').textContent = speeds[speedIdx] + 'x';
+  if (playing) { const li = lineIdx; synth.cancel(); speakLine(li); }
+}
+
+function setVol(v) { if (currentUtt) currentUtt.volume = parseFloat(v); }
+
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && playing) synth.pause();
+  else if (!document.hidden && playing) synth.resume();
+});
+</script>
+</body>
+</html>
