@@ -250,6 +250,10 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
           <div class="sec-label">Recent episodes</div>
           <div id="histList"></div>
         </div>
+        <div id="publicEpisodesWrap" style="display:none">
+  <div class="sec-label">All episodes</div>
+  <div id="publicEpisodesList"></div>
+</div>
       </div>
     </div>
   </div>
@@ -455,7 +459,26 @@ function saveWorkerUrl(){
   checkWorkerUrl();closeModal('setupModal');
 }
 function closeModal(id){document.getElementById(id).classList.remove('on');}
-
+async function loadPublicEpisodes(){
+  try{
+    const res=await fetch(`${R2_BASE}/index.json`);
+    if(!res.ok)return;
+    const index=await res.json();
+    if(!index.length)return;
+    const wrap=document.getElementById('publicEpisodesWrap');
+    const list=document.getElementById('publicEpisodesList');
+    wrap.style.display='block';
+    list.innerHTML=index.map(ep=>`
+      <div class="hist-item" onclick="loadSharedEpisode('${ep.id}')">
+        <div class="hist-icon">${ep.emoji}</div>
+        <div class="hist-body">
+          <div class="hist-title">${ep.title}</div>
+          <div class="hist-meta">${FMT_LABELS[ep.format]||ep.format||''} · ${ep.duration_minutes||'?'} min · ${new Date(ep.createdAt).toLocaleDateString()}</div>
+        </div>
+        <span class="hist-arrow">▶</span>
+      </div>`).join('');
+  }catch(err){console.log('Could not load public episodes',err);}
+}
 function buildSugs(){
   document.getElementById('sugGrid').innerHTML=SUGS.map(s=>
     `<div class="sug-card" onclick="useSug(${JSON.stringify(s.t)},${JSON.stringify(s.f)})">
