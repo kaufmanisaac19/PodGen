@@ -971,8 +971,8 @@ function startPlay(){
       let playTime=0;
       const fadeTimer=setInterval(()=>{
         playTime+=0.1;
-        if(playTime>=3){
-          const fadeProgress=(playTime-3)/2;
+        if(playTime>=2){
+          const fadeProgress=(playTime-2)/3;
           intro.volume=Math.max(0,0.6-(fadeProgress*0.6));
         }
         if(playTime>=5){
