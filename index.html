@@ -270,7 +270,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
           </div>
         </div>
         <div class="sec-label">Try these</div>
-        <div class="sug-grid" id="sugGrid"></div>
+<div id="floatWrap" style="position:relative;height:200px;overflow:hidden;border-radius:12px;background:var(--surface);border:1px solid var(--border);margin-bottom:4px"></div>
         <div id="histWrap" style="display:none">
           <div class="sec-label">Recent episodes</div>
           <div id="histList"></div>
@@ -431,16 +431,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
 <script>
 const DEFAULT_WORKER_URL='https://podgen.kaufman-isaac19.workers.dev';
 const R2_BASE='https://pub-d23ec625d76d452398e0dbe525d7aec3.r2.dev';
-const SUGS=[
-  {e:'🧬',t:'CRISPR gene editing 2025',f:'deep-dive'},
-  {e:'🏠',t:'Global housing affordability crisis',f:'science-check'},
-  {e:'🤖',t:'AI regulation — where things stand',f:'deep-dive'},
-  {e:'🚀',t:'SpaceX vs NASA: the new space race',f:'casual-chat'},
-  {e:'🧠',t:'Sleep science — why 8 hours matters',f:'monologue'},
-  {e:'💊',t:'Ozempic and GLP-1 drugs: the real story',f:'expert-interview'},
-  {e:'🌍',t:'Climate tipping points — latest data',f:'science-check'},
-  {e:'⚡',t:'Nuclear fusion: are we finally there?',f:'philosophers-table'},
-];
+
 const FMT_LABELS={'deep-dive':'Deep Dive','monologue':'Monologue','expert-interview':'Expert Interview','science-check':'Science Check','philosophers-table':"Philosopher's Table",'casual-chat':'Casual Chat'};
 const speeds=[0.75,1,1.25,1.5,2];
 
@@ -523,13 +514,79 @@ function saveWorkerUrl(){
 }
 function closeModal(id){document.getElementById(id).classList.remove('on');}
 
+const ALL_SUGS=[
+  {e:'🧬',t:'CRISPR gene editing 2025',f:'deep-dive'},
+  {e:'🏠',t:'Housing affordability crisis',f:'science-check'},
+  {e:'🤖',t:'AI regulation 2025',f:'deep-dive'},
+  {e:'🚀',t:'SpaceX vs NASA',f:'casual-chat'},
+  {e:'🧠',t:'Sleep science',f:'monologue'},
+  {e:'💊',t:'Ozempic and GLP-1 drugs',f:'expert-interview'},
+  {e:'🌍',t:'Climate tipping points',f:'science-check'},
+  {e:'⚡',t:'Nuclear fusion',f:'philosophers-table'},
+  {e:'🦠',t:'Microbiome and gut health',f:'expert-interview'},
+  {e:'🧪',t:'Psychedelics in medicine',f:'deep-dive'},
+  {e:'🌊',t:'Ocean acidification',f:'science-check'},
+  {e:'🏙️',t:'Urban planning future',f:'philosophers-table'},
+  {e:'💰',t:'Universal basic income',f:'casual-chat'},
+  {e:'🔋',t:'Battery technology breakthroughs',f:'deep-dive'},
+  {e:'🧬',t:'Longevity science',f:'expert-interview'},
+  {e:'📱',t:'Social media and teen mental health',f:'science-check'},
+  {e:'🌱',t:'Regenerative agriculture',f:'casual-chat'},
+  {e:'🤯',t:'Quantum computing explained',f:'monologue'},
+  {e:'🏔️',t:'Rewilding and biodiversity',f:'deep-dive'},
+  {e:'💡',t:'How memory actually works',f:'monologue'},
+];
+
 function buildSugs(){
-  document.getElementById('sugGrid').innerHTML=SUGS.map(s=>
-    `<div class="sug-card" onclick="useSug(${JSON.stringify(s.t)},${JSON.stringify(s.f)})">
-      <div class="sug-icon">${s.e}</div>
-      <div class="sug-title">${s.t}</div>
-      <div class="sug-fmt">${FMT_LABELS[s.f]}</div>
-    </div>`).join('');
+  const wrap=document.getElementById('floatWrap');
+  if(!wrap)return;
+  const bubbles=[];
+  function getRandom(arr,n){
+    const shuffled=[...arr].sort(()=>Math.random()-0.5);
+    return shuffled.slice(0,n);
+  }
+  const selected=getRandom(ALL_SUGS,8);
+  selected.forEach((s,i)=>{
+    const el=document.createElement('div');
+    el.style.cssText='position:absolute;background:var(--surface2);border:1px solid var(--border2);border-radius:99px;padding:6px 12px;font-size:12px;color:var(--text);cursor:pointer;white-space:nowrap;user-select:none;transition:background 0.15s;';
+    el.innerHTML=`${s.e} ${s.t}`;
+    el.addEventListener('click',()=>useSug(s.t,s.f));
+    el.addEventListener('mouseenter',()=>el.style.background='var(--accent-bg)');
+    el.addEventListener('mouseleave',()=>el.style.background='var(--surface2)');
+    wrap.appendChild(el);
+    const state={
+      x:Math.random()*250,
+      y:Math.random()*160,
+      vx:(Math.random()-0.5)*0.6,
+      vy:(Math.random()-0.5)*0.6,
+      el,w:120,h:32
+    };
+    bubbles.push(state);
+    el.style.left=state.x+'px';
+    el.style.top=state.y+'px';
+  });
+  function animate(){
+    const w=wrap.offsetWidth||300;
+    const h=wrap.offsetHeight||200;
+    bubbles.forEach(b=>{
+      b.x+=b.vx;
+      b.y+=b.vy;
+      if(b.x<=0){b.x=0;b.vx=Math.abs(b.vx);}
+      if(b.x+b.w>=w){b.x=w-b.w;b.vx=-Math.abs(b.vx);}
+      if(b.y<=0){b.y=0;b.vy=Math.abs(b.vy);}
+      if(b.y+b.h>=h){b.y=h-b.h;b.vy=-Math.abs(b.vy);}
+      b.el.style.left=b.x+'px';
+      b.el.style.top=b.y+'px';
+    });
+    requestAnimationFrame(animate);
+  }
+  setTimeout(()=>{
+    bubbles.forEach(b=>{
+      b.w=b.el.offsetWidth||120;
+      b.h=b.el.offsetHeight||32;
+    });
+    animate();
+  },100);
 }
 function useSug(t,f){
   document.getElementById('topicInput').value=t;
