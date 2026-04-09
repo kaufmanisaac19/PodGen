@@ -554,7 +554,7 @@ function renderHistory(){
   if(!history.length){wrap.style.display='none';return;}
   wrap.style.display='block';
   document.getElementById('histList').innerHTML=history.map((h,i)=>
-    `<div class="hist-item" onclick="openPlayer(history[${i}].data)">
+    `<div class="hist-item" onclick="history[${i}].episodeId?loadSharedEpisode(history[${i}].episodeId):openPlayer(history[${i}].data)">
       <div class="hist-icon">${h.emoji}</div>
       <div class="hist-body">
         <div class="hist-title">${h.title}</div>
