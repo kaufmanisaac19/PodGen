@@ -962,16 +962,43 @@ function startPlay(){
   playing=true;
   document.getElementById('playIcon').innerHTML='<rect x="4" y="3" width="3" height="10" rx="1"/><rect x="9" y="3" width="3" height="10" rx="1"/>';
   const startLine=Math.min(allLines.length-1,Math.floor(elapsed/totalSecs*allLines.length));
-  playLine(startLine);
+
+  // Play intro music only at the very beginning
+  if(startLine===0 && elapsed===0){
+    const intro=new Audio('intro.mp3');
+    intro.volume=0.6;
+    intro.play().catch(()=>playLine(0));
+
+    // Fade out after 10 seconds then start podcast
+    let fadeStart=10;
+    const fadeTimer=setInterval(()=>{
+      fadeStart-=0.1;
+      if(fadeStart<=9.5) intro.volume=Math.max(0,(fadeStart-9)*0.6/0.5);
+      if(fadeStart<=9){
+        clearInterval(fadeTimer);
+        intro.pause();
+        intro.currentTime=0;
+        if(playing) playLine(0);
+      }
+    },100);
+
+    // If user pauses during intro, stop it
+    intro._fadeTimer=fadeTimer;
+    window._currentIntro=intro;
+  } else {
+    playLine(startLine);
+  }
 }
 function pausePlay(){
   playing=false;clearInterval(progressTimer);
+  if(window._currentIntro){window._currentIntro.pause();clearInterval(window._currentIntro._fadeTimer);window._currentIntro=null;}
   if(currentAudio)currentAudio.pause();
   synth.pause();
   document.getElementById('playIcon').innerHTML='<path d="M6 3.5l7 4.5-7 4.5V3.5z"/>';
 }
 function stopPlay(){
   playing=false;clearInterval(progressTimer);
+  if(window._currentIntro){window._currentIntro.pause();clearInterval(window._currentIntro._fadeTimer);window._currentIntro=null;}
   if(currentAudio){currentAudio.pause();currentAudio=null;}
   synth.cancel();
   document.getElementById('playIcon').innerHTML='<path d="M6 3.5l7 4.5-7 4.5V3.5z"/>';
