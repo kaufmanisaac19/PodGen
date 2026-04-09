@@ -971,11 +971,11 @@ function startPlay(){
       let playTime=0;
       const fadeTimer=setInterval(()=>{
         playTime+=0.1;
-        if(playTime>=10){
-          const fadeProgress=(playTime-10)/2;
+        if(playTime>=3){
+          const fadeProgress=(playTime-3)/2;
           intro.volume=Math.max(0,0.6-(fadeProgress*0.6));
         }
-        if(playTime>=12){
+        if(playTime>=5){
           clearInterval(fadeTimer);
           intro.volume=0;
           setTimeout(()=>{
