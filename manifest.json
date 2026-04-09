@@ -1,7 +1,7 @@
 {
   "name": "PodGen — AI Podcast Generator",
   "short_name": "PodGen",
-  "description": "Generate real, sourced podcasts on any topic. Free to use.",
+  "description": "Generate real, sourced podcasts on any topic.",
   "start_url": "/PodGen/",
   "display": "standalone",
   "background_color": "#0f172a",
