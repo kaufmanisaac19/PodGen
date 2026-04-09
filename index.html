@@ -874,6 +874,21 @@ function playDirectUrl(url){
   audio.volume=parseFloat(document.getElementById('volSlider').value);
   audio.playbackRate=speeds[speedIdx];
   currentAudio=audio;
+
+  // Media Session API — tells the phone this is a podcast
+  if('mediaSession' in navigator){
+    navigator.mediaSession.metadata=new MediaMetadata({
+      title: pod?.title||'PodGen Episode',
+      artist: 'PodGen',
+      album: pod?.subtitle||'AI Podcast',
+      artwork:[{src:'icons/icon-192.png',sizes:'192x192',type:'image/png'}]
+    });
+    navigator.mediaSession.setActionHandler('play',()=>{audio.play();playing=true;document.getElementById('playIcon').innerHTML='<rect x="4" y="3" width="3" height="10" rx="1"/><rect x="9" y="3" width="3" height="10" rx="1"/>';});
+    navigator.mediaSession.setActionHandler('pause',()=>{audio.pause();playing=false;document.getElementById('playIcon').innerHTML='<path d="M6 3.5l7 4.5-7 4.5V3.5z"/>';});
+    navigator.mediaSession.setActionHandler('seekbackward',()=>{audio.currentTime=Math.max(0,audio.currentTime-15);});
+    navigator.mediaSession.setActionHandler('seekforward',()=>{audio.currentTime=Math.min(audio.duration,audio.currentTime+15);});
+  }
+
   audio.addEventListener('loadedmetadata',()=>{
     totalSecs=Math.floor(audio.duration);
     document.getElementById('totalTime').textContent=fmt(totalSecs);
@@ -883,6 +898,13 @@ function playDirectUrl(url){
     if(currentAudio&&!currentAudio.paused){
       elapsed=Math.floor(currentAudio.currentTime);
       updateProg();
+      if('mediaSession' in navigator){
+        navigator.mediaSession.setPositionState({
+          duration:audio.duration||totalSecs,
+          playbackRate:audio.playbackRate,
+          position:audio.currentTime
+        });
+      }
     }
   },500);
   audio.addEventListener('ended',()=>{clearInterval(progressTimer);stopPlay();});
