@@ -233,13 +233,15 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
             <input type="text" class="s-input" id="topicInput" placeholder="Any topic — science, politics, health..." autocomplete="off" autocorrect="off" spellcheck="false">
             <button class="g-btn" onclick="startGenerate()">Generate</button>
           </div>
-          <div class="fmt-row">
+          <div class="fmt-row" id="fmtRow">
   <button class="f-btn active" data-fmt="deep-dive">Deep Dive</button>
   <button class="f-btn" data-fmt="monologue">Monologue</button>
   <button class="f-btn" data-fmt="expert-interview">Expert Interview</button>
   <button class="f-btn" data-fmt="science-check">Science Check</button>
   <button class="f-btn" data-fmt="philosophers-table">Philosopher's Table</button>
   <button class="f-btn" data-fmt="casual-chat">Casual Chat</button>
+</div>
+<div id="fmtDesc" style="font-size:12px;color:var(--muted);padding:7px 4px;line-height:1.5;min-height:36px">Two hosts investigate together — fact-heavy, sourced, with a storytelling segment.</div>
 </div>
         </div>
         <div class="worker-notice" id="workerNotice" style="display:none">
@@ -495,6 +497,14 @@ function saveWorkerUrl(){
   checkWorkerUrl();closeModal('setupModal');
 }
 function closeModal(id){document.getElementById(id).classList.remove('on');}
+
+function toggleHowItWorks(){
+  const content=document.getElementById('howContent');
+  const chev=document.getElementById('howChev');
+  const open=content.style.display==='flex';
+  content.style.display=open?'none':'flex';
+  chev.style.transform=open?'':'rotate(90deg)';
+}
 async function loadPublicEpisodes(){
   try{
     const res=await fetch(`${R2_BASE}/index.json`);
