@@ -965,9 +965,14 @@ function startPlay(){
 
   // Play intro music only at the very beginning
   if(startLine===0 && elapsed===0){
-    const intro=new Audio('intro.mp3');
-    intro.volume=0.6;
-    intro.play().catch(()=>playLine(0));
+    const intro=new Audio('https://kaufmanisaac19.github.io/PodGen/intro.mp3');
+intro.volume=0.6;
+intro.play().then(()=>{
+  console.log('intro playing');
+}).catch((err)=>{
+  console.log('intro failed:',err);
+  playLine(0);
+});
 
     // Fade out after 10 seconds then start podcast
     let fadeStart=10;
