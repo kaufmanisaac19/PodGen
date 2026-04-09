@@ -553,16 +553,23 @@ function cancelGen(){aborted=true;showScreen('search');}
 
 async function loadSharedEpisode(episodeId){
   try{
+    showScreen('generating');
+    document.getElementById('genTopicLabel').textContent='Loading shared episode...';
+    setStep(1);
     const metaUrl=`${R2_BASE}/episodes/${episodeId}.json`;
     const res=await fetch(metaUrl);
-    if(!res.ok)return;
+    if(!res.ok){showScreen('search');return;}
     const meta=await res.json();
     meta.episodeId=episodeId;
     meta._sharedAudioUrl=`${R2_BASE}/episodes/${episodeId}.mp3`;
+    setStep(5);
+    await new Promise(r=>setTimeout(r,300));
     openPlayer(meta);
-  }catch(err){console.log('Could not load shared episode',err);}
+  }catch(err){
+    console.log('Could not load shared episode',err);
+    showScreen('search');
+  }
 }
-
 function openPlayer(p){
   pod=p;elapsed=0;lineIdx=0;playing=false;stopPlay();
   allLines=[];
