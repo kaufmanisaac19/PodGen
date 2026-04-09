@@ -3,6 +3,7 @@
   "short_name": "PodGen",
   "description": "Generate real, sourced podcasts on any topic.",
   "start_url": "/PodGen/",
+  "scope": "/PodGen/",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#0f172a",
