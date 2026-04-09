@@ -400,6 +400,8 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
 
 </div>
 <script>
+<script>
+const DEFAULT_WORKER_URL='https://podgen.kaufman-isaac19.workers.dev';
 const R2_BASE='https://pub-d23ec625d76d452398e0dbe525d7aec3.r2.dev';
 const SUGS=[
   {e:'🧬',t:'CRISPR gene editing 2025',f:'news-dive'},
@@ -427,7 +429,13 @@ window.addEventListener('load',()=>{
     b.classList.add('active');
   }));
   const params=new URLSearchParams(window.location.search);
-  if(params.get('ep'))loadSharedEpisode(params.get('ep'));
+if(params.get('ep')){
+  // Make sure worker URL is set before loading shared episode
+  if(!localStorage.getItem('podgen_worker_url')){
+    localStorage.setItem('podgen_worker_url',DEFAULT_WORKER_URL);
+  }
+  setTimeout(()=>loadSharedEpisode(params.get('ep')), 100);
+}
   if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 });
 
