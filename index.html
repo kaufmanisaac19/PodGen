@@ -1017,8 +1017,10 @@ function cycleSpeed(){
 }
 function setVol(v){if(currentAudio)currentAudio.volume=parseFloat(v);}
 document.addEventListener('visibilitychange',()=>{
-  if(document.hidden&&playing&&currentAudio)currentAudio.pause();
-  else if(!document.hidden&&playing&&currentAudio)currentAudio.play();
+  // Don't pause when screen locks — let Media Session handle it
+  if(!document.hidden&&playing&&currentAudio&&currentAudio.paused){
+    currentAudio.play().catch(()=>{});
+  }
 });
 </script>
 </body>
