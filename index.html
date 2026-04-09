@@ -964,7 +964,7 @@ function startPlay(){
   const startLine=Math.min(allLines.length-1,Math.floor(elapsed/totalSecs*allLines.length));
 
   // Play intro music only at the very beginning
-  if(startLine===0 && elapsed===0){
+  if(startLine===0 && elapsed<1){
    const intro=new Audio('https://pub-d23ec625d76d452398e0dbe525d7aec3.r2.dev/intro.mp3');
 intro.volume=0.6;
 intro.play().then(()=>{
@@ -975,17 +975,14 @@ intro.play().then(()=>{
 });
 
     // Fade out after 10 seconds then start podcast
-    let fadeStart=10;
-    const fadeTimer=setInterval(()=>{
-      fadeStart-=0.1;
-      if(fadeStart<=9.5) intro.volume=Math.max(0,(fadeStart-9)*0.6/0.5);
-      if(fadeStart<=9){
-        clearInterval(fadeTimer);
-        intro.pause();
-        intro.currentTime=0;
-        if(playing) playLine(0);
-      }
-    },100);
+   if(fadeStart<=9){
+  clearInterval(fadeTimer);
+  intro.volume=0;
+  setTimeout(()=>{
+    intro.pause();
+    intro.currentTime=0;
+    if(playing) playLine(0);
+  },100);
 
     // If user pauses during intro, stop it
     intro._fadeTimer=fadeTimer;
@@ -1049,7 +1046,6 @@ function cycleSpeed(){
 }
 function setVol(v){if(currentAudio)currentAudio.volume=parseFloat(v);}
 document.addEventListener('visibilitychange',()=>{
-  // Don't pause when screen locks — let Media Session handle it
   if(!document.hidden&&playing&&currentAudio&&currentAudio.paused){
     currentAudio.play().catch(()=>{});
   }
