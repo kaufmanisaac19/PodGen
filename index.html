@@ -425,7 +425,7 @@ let currentAudio=null,progressTimer=null;
 let currentShareUrl=null,currentEpisodeId=null;
 
 window.addEventListener('load',()=>{
-  buildSugs();loadHistory();checkWorkerUrl();
+  buildSugs();loadHistory();checkWorkerUrl();loadPublicEpisodes();
   document.getElementById('topicInput').addEventListener('keydown',e=>{if(e.key==='Enter')startGenerate();});
   document.querySelectorAll('.f-btn').forEach(b=>b.addEventListener('click',()=>{
     document.querySelectorAll('.f-btn').forEach(x=>x.classList.remove('active'));
