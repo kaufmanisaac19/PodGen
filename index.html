@@ -463,6 +463,11 @@ let currentAudio=null,progressTimer=null;
 let currentShareUrl=null,currentEpisodeId=null;
 
 window.addEventListener('load',()=>{
+  document.querySelectorAll('.f-btn').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.f-btn').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  document.getElementById('fmtDesc').textContent=FMT_DESCS[b.dataset.fmt]||'';
+}));
   buildSugs();loadHistory();checkWorkerUrl();loadPublicEpisodes();
   document.getElementById('topicInput').addEventListener('keydown',e=>{if(e.key==='Enter')startGenerate();});
   const FMT_DESCS={
