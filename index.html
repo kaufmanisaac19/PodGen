@@ -409,16 +409,16 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
 const DEFAULT_WORKER_URL='https://podgen.kaufman-isaac19.workers.dev';
 const R2_BASE='https://pub-d23ec625d76d452398e0dbe525d7aec3.r2.dev';
 const SUGS=[
-  {e:'🧬',t:'CRISPR gene editing 2025',f:'news-dive'},
-  {e:'🏠',t:'Global housing affordability crisis',f:'debate'},
-  {e:'🤖',t:'AI regulation — where things stand',f:'news-dive'},
-  {e:'🚀',t:'SpaceX vs NASA: the new space race',f:'debate'},
-  {e:'🧠',t:'Sleep science — why 8 hours matters',f:'explainer'},
-  {e:'💊',t:'Ozempic and GLP-1 drugs: the real story',f:'interview'},
-  {e:'🌍',t:'Climate tipping points — latest data',f:'news-dive'},
-  {e:'⚡',t:'Nuclear fusion: are we finally there?',f:'explainer'},
+  {e:'🧬',t:'CRISPR gene editing 2025',f:'deep-dive'},
+  {e:'🏠',t:'Global housing affordability crisis',f:'science-check'},
+  {e:'🤖',t:'AI regulation — where things stand',f:'deep-dive'},
+  {e:'🚀',t:'SpaceX vs NASA: the new space race',f:'casual-chat'},
+  {e:'🧠',t:'Sleep science — why 8 hours matters',f:'monologue'},
+  {e:'💊',t:'Ozempic and GLP-1 drugs: the real story',f:'expert-interview'},
+  {e:'🌍',t:'Climate tipping points — latest data',f:'science-check'},
+  {e:'⚡',t:'Nuclear fusion: are we finally there?',f:'philosophers-table'},
 ];
-const FMT_LABELS={'news-dive':'News deep-dive','interview':'Interview','debate':'Panel debate','explainer':'Explainer'};
+const FMT_LABELS={'deep-dive':'Deep Dive','monologue':'Monologue','expert-interview':'Expert Interview','science-check':'Science Check','philosophers-table':"Philosopher's Table",'casual-chat':'Casual Chat'};
 const speeds=[0.75,1,1.25,1.5,2];
 
 let pod=null,allLines=[],playing=false,elapsed=0,lineIdx=0;
