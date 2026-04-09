@@ -438,7 +438,6 @@ if(params.get('ep')){
   if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 });
 
-const DEFAULT_WORKER_URL='https://podgen.kaufman-isaac19.workers.dev';
 
 function checkWorkerUrl(){
   if(!localStorage.getItem('podgen_worker_url')){
