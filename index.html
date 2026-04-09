@@ -964,13 +964,20 @@ function startPlay(){
   const startLine=Math.min(allLines.length-1,Math.floor(elapsed/totalSecs*allLines.length));
 
   if(startLine===0 && elapsed<1){
+    // Get the first line's audio ready
+    const firstLine=allLines[0];
+    let podAudio=null;
+
+    if(firstLine&&firstLine.audio){
+      podAudio=new Audio('data:audio/mp3;base64,'+firstLine.audio);
+      podAudio.volume=0;
+      podAudio.play().catch(()=>{});
+    }
+
     const intro=new Audio('https://pub-d23ec625d76d452398e0dbe525d7aec3.r2.dev/intro.mp3');
     intro.volume=0.6;
     intro.play().then(()=>{
-  console.log('intro playing');
-  // Pre-create and unlock a silent audio context for iOS
-  const silentAudio=new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4LjI5LjEwMAAAAAAAAAAAAAAA//OEAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAABAAABIADAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//OEAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAABAAAAIADAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA');
-  silentAudio.play().catch(()=>{});
+      console.log('intro playing');
       let playTime=0;
       const fadeTimer=setInterval(()=>{
         playTime+=0.1;
@@ -981,6 +988,7 @@ function startPlay(){
         if(playTime>=5){
           clearInterval(fadeTimer);
           intro.volume=0;
+          if(podAudio){podAudio.pause();podAudio=null;}
           setTimeout(()=>{
             intro.pause();
             intro.currentTime=0;
@@ -992,6 +1000,7 @@ function startPlay(){
       window._currentIntro=intro;
     }).catch((err)=>{
       console.log('intro failed:',err);
+      if(podAudio){podAudio.pause();podAudio=null;}
       playLine(0);
     });
   } else {
