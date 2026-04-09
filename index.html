@@ -963,6 +963,39 @@ function startPlay(){
   document.getElementById('playIcon').innerHTML='<rect x="4" y="3" width="3" height="10" rx="1"/><rect x="9" y="3" width="3" height="10" rx="1"/>';
   const startLine=Math.min(allLines.length-1,Math.floor(elapsed/totalSecs*allLines.length));
 
+  if(startLine===0 && elapsed<1){
+    const intro=new Audio('https://pub-d23ec625d76d452398e0dbe525d7aec3.r2.dev/intro.mp3');
+    intro.volume=0.6;
+    intro.play().then(()=>{
+      console.log('intro playing');
+      let playTime=0;
+      const fadeTimer=setInterval(()=>{
+        playTime+=0.1;
+        if(playTime>=10){
+          const fadeProgress=(playTime-10)/2;
+          intro.volume=Math.max(0,0.6-(fadeProgress*0.6));
+        }
+        if(playTime>=12){
+          clearInterval(fadeTimer);
+          intro.volume=0;
+          setTimeout(()=>{
+            intro.pause();
+            intro.currentTime=0;
+            if(playing)playLine(0);
+          },100);
+        }
+      },100);
+      intro._fadeTimer=fadeTimer;
+      window._currentIntro=intro;
+    }).catch((err)=>{
+      console.log('intro failed:',err);
+      playLine(0);
+    });
+  } else {
+    playLine(startLine);
+  }
+}
+
   // Play intro music only at the very beginning
   if(startLine===0 && elapsed<1){
    const intro=new Audio('https://pub-d23ec625d76d452398e0dbe525d7aec3.r2.dev/intro.mp3');
