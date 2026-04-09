@@ -246,8 +246,11 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
           <strong>Setup required once:</strong> This app needs a Cloudflare Worker URL.
           <a href="#" onclick="showSetup();return false"> Tap here to set it up →</a>
         </div>
-        <div class="sec-label">How it works</div>
-<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:4px">
+        <button onclick="toggleHowItWorks()" style="display:flex;align-items:center;justify-content:space-between;width:100%;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--muted);font-size:13px;cursor:pointer;-webkit-appearance:none;font-family:inherit;margin-bottom:4px" id="howBtn">
+  <span>How it works</span>
+  <span id="howChev" style="font-size:10px;transition:transform 0.2s">▶</span>
+</button>
+<div id="howContent" style="display:none;flex-direction:column;gap:8px;margin-bottom:4px">
   <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--surface);border-radius:12px;border:1px solid var(--border)">
     <div style="width:32px;height:32px;border-radius:8px;background:var(--accent-bg);border:1px solid var(--accent-bd);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px">🔍</div>
     <div>
