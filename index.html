@@ -965,40 +965,6 @@ function startPlay(){
   playLine(startLine);
 }
 
-    const intro=new Audio('https://pub-d23ec625d76d452398e0dbe525d7aec3.r2.dev/intro.mp3');
-    intro.volume=0.6;
-    intro.play().then(()=>{
-      console.log('intro playing');
-      let playTime=0;
-      const fadeTimer=setInterval(()=>{
-        playTime+=0.1;
-        if(playTime>=2){
-          const fadeProgress=(playTime-2)/3;
-          intro.volume=Math.max(0,0.6-(fadeProgress*0.6));
-        }
-        if(playTime>=5){
-          clearInterval(fadeTimer);
-          intro.volume=0;
-          if(podAudio){podAudio.pause();podAudio=null;}
-          setTimeout(()=>{
-            intro.pause();
-            intro.currentTime=0;
-            if(playing)playLine(0);
-          },100);
-        }
-      },100);
-      intro._fadeTimer=fadeTimer;
-      window._currentIntro=intro;
-    }).catch((err)=>{
-      console.log('intro failed:',err);
-      if(podAudio){podAudio.pause();podAudio=null;}
-      playLine(0);
-    });
-  } else {
-    playLine(startLine);
-  }
-}
-
  
 function pausePlay(){
   playing=false;clearInterval(progressTimer);
