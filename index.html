@@ -465,10 +465,20 @@ let currentShareUrl=null,currentEpisodeId=null;
 window.addEventListener('load',()=>{
   buildSugs();loadHistory();checkWorkerUrl();loadPublicEpisodes();
   document.getElementById('topicInput').addEventListener('keydown',e=>{if(e.key==='Enter')startGenerate();});
-  document.querySelectorAll('.f-btn').forEach(b=>b.addEventListener('click',()=>{
-    document.querySelectorAll('.f-btn').forEach(x=>x.classList.remove('active'));
-    b.classList.add('active');
-  }));
+  const FMT_DESCS={
+  'deep-dive':'Two hosts investigate together — fact-heavy, sourced, with a storytelling segment.',
+  'monologue':'One expert host builds a complex argument solo, step by step, referencing real research.',
+  'expert-interview':'Host interviews a domain expert with curious, probing questions and natural tangents.',
+  'science-check':'Host challenges an expert with competing research — friendly but forensically rigorous.',
+  'philosophers-table':'Two thinkers explore the big-picture implications — ethics, future consequences, meaning.',
+  'casual-chat':'Two friends have a relaxed, curious conversation — no agenda, just genuine back-and-forth.'
+};
+
+document.querySelectorAll('.f-btn').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.f-btn').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  document.getElementById('fmtDesc').textContent=FMT_DESCS[b.dataset.fmt]||'';
+}));
   const params=new URLSearchParams(window.location.search);
 if(params.get('ep')){
   // Make sure worker URL is set before loading shared episode
