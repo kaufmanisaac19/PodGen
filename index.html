@@ -967,7 +967,10 @@ function startPlay(){
     const intro=new Audio('https://pub-d23ec625d76d452398e0dbe525d7aec3.r2.dev/intro.mp3');
     intro.volume=0.6;
     intro.play().then(()=>{
-      console.log('intro playing');
+  console.log('intro playing');
+  // Pre-create and unlock a silent audio context for iOS
+  const silentAudio=new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4LjI5LjEwMAAAAAAAAAAAAAAA//OEAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAABAAABIADAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//OEAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAABAAAAIADAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA');
+  silentAudio.play().catch(()=>{});
       let playTime=0;
       const fadeTimer=setInterval(()=>{
         playTime+=0.1;
